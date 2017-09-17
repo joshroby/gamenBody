@@ -1,0 +1,16 @@
+#svgDiv {
+	width: 30vw;
+	height: 50vh;
+	margin-right: 10vw;
+	float: left;
+}
+
+#svgDiv svg {
+	border: 1px solid red;
+}
+
+#controlsDiv {
+	height: 100%;
+	float: left;
+	overflow-y: auto;
+}
