@@ -749,7 +749,7 @@ function GamenBody() {
 		farUpperArm.appendChild(rect);
 		rect.setAttribute('x',(farShoulder.x+farElbow.x)/2-this.bio('armWidth') * 15);
 		rect.setAttribute('y',(farShoulder.y+farElbow.y)/2-upperArmLength/2);
-		rect.setAttribute('height',upperArmLength);
+		rect.setAttribute('height',upperArmLength * 1.05);
 		rect.setAttribute('width',this.bio('armWidth') * 30);
 		rect.setAttribute('rx',this.bio('armWidth') * 15);
 		rect.setAttribute('ry',upperArmLength);
@@ -790,7 +790,7 @@ function GamenBody() {
 		nearUpperArm.appendChild(rect);
 		rect.setAttribute('x',(nearShoulder.x+nearElbow.x)/2-this.bio('armWidth') * 15);
 		rect.setAttribute('y',(nearShoulder.y+nearElbow.y)/2-upperArmLength/2);
-		rect.setAttribute('height',upperArmLength);
+		rect.setAttribute('height',upperArmLength * 1.05);
 		rect.setAttribute('width',this.bio('armWidth') * 30);
 		rect.setAttribute('rx',this.bio('armWidth') * 15);
 		rect.setAttribute('ry',upperArmLength);
@@ -806,15 +806,15 @@ function GamenBody() {
 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',farElbow.x);
 		circle.setAttribute('cy',farElbow.y);
-		circle.setAttribute('r',7);
+		circle.setAttribute('r',9 * this.bio('armWidth'));
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		farLowerArm.appendChild(rect);
-		rect.setAttribute('x',(farElbow.x+farWrist.x)/2-this.bio('armWidth') * 15);
-		rect.setAttribute('y',(farElbow.y+farWrist.y)/2-forearmLength/2);
-		rect.setAttribute('height',forearmLength);
-		rect.setAttribute('width',this.bio('armWidth') * 30);
-		rect.setAttribute('rx',this.bio('armWidth') * 15);
-		rect.setAttribute('ry',forearmLength/2);
+		rect.setAttribute('x',(farElbow.x+farWrist.x)/2-this.bio('armWidth') * 10);
+		rect.setAttribute('y',(farElbow.y+farWrist.y)/2-forearmLength/1.8);
+		rect.setAttribute('height',forearmLength * 1);
+		rect.setAttribute('width',this.bio('armWidth') * 20);
+		rect.setAttribute('rx',this.bio('armWidth') * 20);
+		rect.setAttribute('ry',forearmLength);
 		tilt = this.pose.farForearmLift * -180/Math.PI;
 		rect.setAttribute('transform','rotate('+tilt+' '+(farElbow.x+farWrist.x)/2+' '+(farElbow.y+farWrist.y)/2+')');
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -833,15 +833,15 @@ function GamenBody() {
 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',nearElbow.x);
 		circle.setAttribute('cy',nearElbow.y);
-		circle.setAttribute('r',7);
+		circle.setAttribute('r',9 * this.bio('armWidth'));
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		nearLowerArm.appendChild(rect);
-		rect.setAttribute('x',(nearElbow.x+nearWrist.x)/2-this.bio('armWidth') * 15);
-		rect.setAttribute('y',(nearElbow.y+nearWrist.y)/2-forearmLength/2);
-		rect.setAttribute('height',forearmLength);
-		rect.setAttribute('width',this.bio('armWidth') * 30);
-		rect.setAttribute('rx',this.bio('armWidth') * 15);
-		rect.setAttribute('ry',forearmLength/2);
+		rect.setAttribute('x',(nearElbow.x+nearWrist.x)/2-this.bio('armWidth') * 10);
+		rect.setAttribute('y',(nearElbow.y+nearWrist.y)/2-forearmLength/1.8);
+		rect.setAttribute('height',forearmLength * 1);
+		rect.setAttribute('width',this.bio('armWidth') * 20);
+		rect.setAttribute('rx',this.bio('armWidth') * 20);
+		rect.setAttribute('ry',forearmLength);
 		tilt = this.pose.nearForearmLift * -180/Math.PI;
 		rect.setAttribute('transform','rotate('+tilt+' '+(nearElbow.x+nearWrist.x)/2+' '+(nearElbow.y+nearWrist.y)/2+')');
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -857,7 +857,7 @@ function GamenBody() {
 		farElbowJoint.appendChild(circle);
 		circle.setAttribute('cx',farElbow.x);
 		circle.setAttribute('cy',farElbow.y);
-		circle.setAttribute('r',7);
+		circle.setAttribute('r',9 * this.bio('armWidth'));
 				
 		var nearElbowJoint = document.createElementNS('http://www.w3.org/2000/svg','use');
 		nearElbowJoint.id = 'nearElbowJoint';
@@ -865,40 +865,102 @@ function GamenBody() {
 		nearElbowJoint.appendChild(circle);
 		circle.setAttribute('cx',nearElbow.x);
 		circle.setAttribute('cy',nearElbow.y);
-		circle.setAttribute('r',7);
+		circle.setAttribute('r',9 * this.bio('armWidth'));
 		
 		var torso = document.createElementNS('http://www.w3.org/2000/svg','g');
 		torso.id = 'torso';
 		torso.setAttribute('fill',skinTone);
 		torso.setAttribute('stroke','inherit');
-		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-		torso.appendChild(polygon);
-		polygon.setAttribute('stroke','none');
-		var pointsArray = [
-			{x:nearHip.x,y:nearHip.y - this.bio('hipsWidth') * 30},
-			nearShoulder,
-			{x:(neckBase.x + headCenter.x)/2,y:(neckBase.y + headCenter.y)/2},
-			farShoulder,
-			{x:farHip.x,y:farHip.y - this.bio('hipsWidth') * 30},
-			{x:0,y:pelvisHeight}
-		];
-		var pointsString = '';
-		for (var i of pointsArray) {
-			pointsString += i.x + ',' + i.y + ' ';
-		};
-		polygon.setAttribute('points',pointsString);
-		var rightSide = document.createElementNS('http://www.w3.org/2000/svg','line');
-		torso.appendChild(rightSide);
-		rightSide.setAttribute('x1',nearHip.x);
-		rightSide.setAttribute('y1',nearHip.y - this.bio('hipsWidth') * 30);
-		rightSide.setAttribute('x2',nearShoulder.x);
-		rightSide.setAttribute('y2',nearShoulder.y);
-		var leftSide = document.createElementNS('http://www.w3.org/2000/svg','line');
-		torso.appendChild(leftSide);
-		leftSide.setAttribute('x1',farHip.x);
-		leftSide.setAttribute('y1',farHip.y - this.bio('hipsWidth') * 30);
-		leftSide.setAttribute('x2',farShoulder.x);
-		leftSide.setAttribute('y2',farShoulder.y);
+// 		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+// 		torso.appendChild(polygon);
+// 		polygon.setAttribute('stroke','none');
+// 		polygon.setAttribute('fill','red');
+// 		var pointsArray = [
+// 			{x:nearHip.x,y:nearHip.y - this.bio('hipsWidth') * 30},
+// 			nearShoulder,
+// 			{x:(neckBase.x + headCenter.x)/2,y:(neckBase.y + headCenter.y)/2},
+// 			farShoulder,
+// 			{x:farHip.x,y:farHip.y - this.bio('hipsWidth') * 30},
+// 			{x:0,y:pelvisHeight}
+// 		];
+// 		var pointsString = '';
+// 		for (var i of pointsArray) {
+// 			pointsString += i.x + ',' + i.y + ' ';
+// 		};
+// 		polygon.setAttribute('points',pointsString);
+// 		var rightSide = document.createElementNS('http://www.w3.org/2000/svg','line');
+// 		torso.appendChild(rightSide);
+// 		rightSide.setAttribute('x1',nearHip.x);
+// 		rightSide.setAttribute('y1',nearHip.y - this.bio('hipsWidth') * 30);
+// 		rightSide.setAttribute('x2',nearShoulder.x);
+// 		rightSide.setAttribute('y2',nearShoulder.y);
+// 		var leftSide = document.createElementNS('http://www.w3.org/2000/svg','line');
+// 		torso.appendChild(leftSide);
+// 		leftSide.setAttribute('x1',farHip.x);
+// 		leftSide.setAttribute('y1',farHip.y - this.bio('hipsWidth') * 30);
+// 		leftSide.setAttribute('x2',farShoulder.x);
+// 		leftSide.setAttribute('y2',farShoulder.y);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		path.setAttribute('stroke','none');
+// 		path.setAttribute('fill','none');
+		var farSide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farSide.setAttribute('fill','none');
+		torso.appendChild(farSide);
+		var nearSide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearSide.setAttribute('fill','none');
+		torso.appendChild(nearSide);
+		torso.appendChild(path);
+		var d = 'M '+nearHip.x+','+(nearHip.y - this.bio('hipsWidth') * 30)+' ';
+		var nearD = 'M '+nearHip.x+','+(nearHip.y - this.bio('hipsWidth') * 30)+' ';
+		var farD = 'M '+farShoulder.x+','+farShoulder.y+' ';
+		var nearC = (nearShoulder.y - nearHip.y)/2;
+		var farC = (farShoulder.y - farHip.y)/2;
+		// Up Near Side
+		c1x = nearHip.x;
+		c1y = nearHip.y - this.bio('hipsWidth') * 30 + nearC;
+		x = nearShoulder.x;
+		y = nearShoulder.y;
+		c2x = x;
+		c2y = y - nearC;
+		d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		nearD += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		// Up to Neck
+		c1x = x+10;
+		c1y = y+0;
+		x = (neckBase.x + headCenter.x)/2;
+		y = (neckBase.y + headCenter.y)/2;
+		c2x = x;
+		c2y = y+10;
+		d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		// Down to Far Shoulder
+		c1x = x+0;
+		c1y = y+10;
+		x = farShoulder.x;
+		y = farShoulder.y;
+		c2x = x-10;
+		c2y = y;
+		d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		// Down Far Side
+		c1x = x+0;
+		c1y = y - farC;
+		x = farHip.x;
+		y = farHip.y - this.bio('hipsWidth') * 30;
+		c2x = x;
+		c2y = y + farC;
+		d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		farD += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		// To Pelvis
+		c1x = x;
+		c1y = y;
+		x = 0;
+		y = pelvisHeight;
+		c2x = x;
+		c2y = y;
+		d += 'C' + c1x + ',' + c1y + ' ' + c2x + ',' + c2y + ' ' + x + ',' + y + ' ';
+		d += ' z';
+		path.setAttribute('d',d);
+		nearSide.setAttribute('d',nearD);
+		farSide.setAttribute('d',farD);
 		var pelvis = document.createElementNS('http://www.w3.org/2000/svg','path');
 		torso.appendChild(pelvis);
 		var startX = hipsWidth * 0.4;
@@ -939,9 +1001,11 @@ function GamenBody() {
 		var polyline = document.createElementNS('http://www.w3.org/2000/svg','polyline');
 		shoulders.appendChild(polyline);
 		var pointsArray = [
+			{x:nearShoulder.x,y:nearShoulder.y+this.bio('bicep') * 10},
 			{x:nearShoulder.x,y:nearShoulder.y-this.bio('bicep') * 10},
 			{x:(2*neckBase.x + headCenter.x)/3,y:(2*neckBase.y + headCenter.y)/3},
 			{x:farShoulder.x,y:farShoulder.y-this.bio('bicep') * 10},
+			{x:farShoulder.x,y:farShoulder.y+this.bio('bicep') * 10},
 		];
 		var pointsString = '';
 		for (var i of pointsArray) {
