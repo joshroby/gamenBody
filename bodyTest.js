@@ -89,6 +89,12 @@ var handlers = {
 function GamenBody() {
 
 	this.parameters = {
+
+		areolaeWidth: {
+			root: 1.09,
+			coefficient: 170,
+			curve: 'bell',
+		},
 	
 		armLength: {
 			root: 1.04,
@@ -174,6 +180,30 @@ function GamenBody() {
 			curve: 'bell',
 		},
 	
+		neckWidth: {
+			root: 1.025,
+			coefficient: 170,
+			curve: 'bell',
+		},
+		
+		nippleLength: {
+			root: 1.08,
+			coefficient: 170,
+			curve: 'bell',
+		},
+		
+		nippleWidth: {
+			root: 1.08,
+			coefficient: 170,
+			curve: 'bell',
+		},
+		
+		nipplePuff: {
+			root: 1.08,
+			coefficient: 170,
+			curve: 'bell',
+		},
+	
 		shouldersWidth: {
 			root: 1.04,
 			coefficient: 170,
@@ -208,7 +238,7 @@ function GamenBody() {
 	};
 
 	this.skinTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
-
+	this.areolaeTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
 	
 	this.bio = function(key) {
 		var result = this.biometrics[key];
@@ -232,6 +262,9 @@ function GamenBody() {
 		var minY = height * -0.8
 		var viewBoxString = minX + ' ' + minY + ' ' + width + ' ' + height;
 		svg.setAttribute('viewBox',viewBoxString);
+		
+		var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+		svg.appendChild(defs);
 		
 		var shadow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
 		svg.appendChild(shadow);
@@ -274,6 +307,7 @@ function GamenBody() {
 		
 		// Colors
 		var skinTone = this.skinTone;
+		var areolaeTone = this.areolaeTone;
 
 		// Joints and Points
 		var nearHip = {
@@ -331,11 +365,11 @@ function GamenBody() {
 			y: farElbow.y + Math.cos(pose.farForearmLift)*forearmLength,
 		};
 		var upperBodyAngle ;
-		if (pose.farUpperArmLift > 0 && pose.nearUpperArmLift > 0) {
+		if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift >= 0) {
 			upperBodyAngle = true;
-		} else if (pose.farUpperArmLift < 0 && pose.nearUpperArmLift < 0) {
+		} else if (pose.farUpperArmLift <= 0 && pose.nearUpperArmLift <= 0) {
 			upperBodyAngle = false;
-		} else if (pose.farUpperArmLift > 0 && pose.nearUpperArmLift < 0 && Math.abs(pose.farUpperArmLift) > Math.abs(pose.nearUpperArmLift) ) {
+		} else if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift <= 0 && Math.abs(pose.farUpperArmLift) > Math.abs(pose.nearUpperArmLift) ) {
 			upperBodyAngle = true;
 		} else {
 			upperBodyAngle = false;
@@ -353,7 +387,7 @@ function GamenBody() {
 		var breastSize = this.bio('breastSize') * 20;
 		var farBreastAnchor = {
 			x:farShoulder.x/2,
-			y:neckBase.y + torsoHeight/6,
+			y:neckBase.y + torsoHeight/8,
 		};
 		var farBreastCenter = {
 			x:farShoulder.x/2,
@@ -361,19 +395,46 @@ function GamenBody() {
 		};
 		var nearBreastAnchor = {
 			x:nearShoulder.x/2,
-			y:neckBase.y + torsoHeight/6,
+			y:neckBase.y + torsoHeight/8,
 		};
 		var nearBreastCenter = {
 			x:nearShoulder.x/2,
 			y:nearBreastAnchor.y + Math.max(breastSize,torsoHeight/3 * this.bio('breastSag')),
 		};
 		if (upperBodyAngle) {
-			farBreastCenter.x += this.bio('breastSize') * 10;
-			nearBreastCenter.x += this.bio('breastSize') * 10;
+			farBreastCenter.x += breastSize/2;
+			nearBreastCenter.x += breastSize/2;
 		} else {
-			farBreastCenter.x -= this.bio('breastSize') * 10;
-			nearBreastCenter.x -= this.bio('breastSize') * 10;
+			farBreastCenter.x -= breastSize/2;
+			nearBreastCenter.x -= breastSize/2;
 		};
+		if (upperBodyAngle) {
+			areolaeOffset = breastSize * 0.5;
+		} else {
+			areolaeOffset = breastSize * -0.5;
+		};
+		var farAreolae = {
+			x: farBreastCenter.x + areolaeOffset,
+			y: Math.min(farBreastCenter.y - breastSize/2 + this.bio('breastSag')/2.4 * breastSize * 1.5,farBreastCenter.y + breastSize),
+		};
+		var nearAreolae = {
+			x: nearBreastCenter.x + areolaeOffset,
+			y: Math.min(nearBreastCenter.y - breastSize/2 + this.bio('breastSag')/2.4 * breastSize * 1.5,nearBreastCenter.y + breastSize),
+		};
+		var nippleWidth = this.bio('nippleWidth') * 10;
+		var nippleLength = this.bio('nippleLength') * 17;
+		if (!upperBodyAngle) {
+			nippleLength *= -1;
+		};
+		var farNippleTop = {
+			x: farAreolae.x,
+			y: farAreolae.y - nippleWidth/2,
+		};
+		var nearNippleTop = {
+			x: nearAreolae.x,
+			y: nearAreolae.y - nippleWidth/2,
+		};
+		console.log(this.bio('breastSag'));
 		
 //		Wireframe (Old)
 // 		var wireframe = document.createElementNS('http://www.w3.org/2000/svg','g');
@@ -803,7 +864,7 @@ function GamenBody() {
 		shoulders.appendChild(polyline);
 		var pointsArray = [
 			{x:nearShoulder.x,y:nearShoulder.y-this.bio('bicep') * 10},
-			{x:(neckBase.x + headCenter.x)/2,y:(neckBase.y + headCenter.y)/2},
+			{x:(2*neckBase.x + headCenter.x)/3,y:(2*neckBase.y + headCenter.y)/3},
 			{x:farShoulder.x,y:farShoulder.y-this.bio('bicep') * 10},
 		];
 		var pointsString = '';
@@ -884,8 +945,21 @@ function GamenBody() {
 // 		farBreast.appendChild(sphere);
 // 		sphere.setAttribute('stroke','none');
 // 		sphere.setAttribute('cx',farBreastCenter.x);
-// 		sphere.setAttribute('cy',farBreastCenter.y);
+// 		sphere.setAttribute('cy',farBreastCenter.y); 
 // 		sphere.setAttribute('r',this.bio('breastSize')*20);
+		var nippleBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farBreast.appendChild(nippleBack);
+		nippleBack.setAttribute('fill',areolaeTone);
+		nippleBack.setAttribute('cx',farAreolae.x);
+		nippleBack.setAttribute('cy',farAreolae.y);
+		nippleBack.setAttribute('r',nippleWidth/2);
+		var block = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		farBreast.appendChild(block);
+		block.setAttribute('stroke','none');
+		block.setAttribute('x',farBreastAnchor.x-9);
+		block.setAttribute('y',farBreastAnchor.y-5);
+		block.setAttribute('width',10);
+		block.setAttribute('height',this.bio('breastSag')*30);
 		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
 		farBreast.appendChild(path);
 		var c1x, c1y, x, y, c2x, c2y;
@@ -923,6 +997,39 @@ function GamenBody() {
 			d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
 		};
 		path.setAttribute('d',d);
+		var farBreastClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+		farBreastClipPath.id = 'farBreastClipPath';
+		defs.appendChild(farBreastClipPath);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		path.setAttribute('d',d);
+		farBreastClipPath.appendChild(path);
+		var areolae = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farBreast.appendChild(areolae);
+		areolae.setAttribute('fill',areolaeTone);
+		areolae.setAttribute('stroke','none');
+		areolae.setAttribute('cx',farAreolae.x);
+		areolae.setAttribute('cy',farAreolae.y);
+		areolae.setAttribute('r',this.bio('areolaeWidth') * 10);
+		areolae.setAttribute('clip-path','url(#farBreastClipPath)');
+		var nipplePuff = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farBreast.appendChild(nipplePuff);
+		nipplePuff.setAttribute('fill',areolaeTone);
+		nipplePuff.setAttribute('cx',farAreolae.x);
+		nipplePuff.setAttribute('cy',farAreolae.y);
+		nipplePuff.setAttribute('r',this.bio('nipplePuff') * 10);
+		var nipple = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farBreast.appendChild(nipple);
+		nipple.setAttribute('fill',areolaeTone);
+		var d = 'M ' + farNippleTop.x + ',' + farNippleTop.y + ' ';
+		d += 'c ' + nippleLength + ',' + 0 + ' ' + nippleLength + ',' + nippleWidth + ' ' + 0 + ',' + nippleWidth ;
+		nipple.setAttribute('d',d);
+// 		var tilt = this.bio('breastSag') * 60 - 50;
+		if (upperBodyAngle) {
+			tilt = Math.atan2(farAreolae.y - farBreastCenter.y,farAreolae.x - farBreastCenter.x) * 180 / Math.PI;
+		} else {
+			tilt = Math.atan2(farBreastCenter.y - farAreolae.y,farBreastCenter.x - farAreolae.x) * 180 / Math.PI;
+		};
+		nipple.setAttribute('transform','rotate('+tilt+' '+farAreolae.x+' '+farAreolae.y+')');
 		
 		
 		var nearBreast = document.createElementNS('http://www.w3.org/2000/svg','g');
@@ -936,6 +1043,19 @@ function GamenBody() {
 // 		sphere.setAttribute('cx',nearBreastCenter.x);
 // 		sphere.setAttribute('cy',nearBreastCenter.y);
 // 		sphere.setAttribute('r',this.bio('breastSize')*20);
+		var nippleBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearBreast.appendChild(nippleBack);
+		nippleBack.setAttribute('fill',areolaeTone);
+		nippleBack.setAttribute('cx',nearAreolae.x);
+		nippleBack.setAttribute('cy',nearAreolae.y);
+		nippleBack.setAttribute('r',nippleWidth/2);
+		var block = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		nearBreast.appendChild(block);
+		block.setAttribute('stroke','none');
+		block.setAttribute('x',nearBreastAnchor.x-1);
+		block.setAttribute('y',nearBreastAnchor.y-5);
+		block.setAttribute('width',10);
+		block.setAttribute('height',this.bio('breastSag')*30);
 		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
 		nearBreast.appendChild(path);
 		var c1x, c1y, x, y, c2x, c2y;
@@ -973,6 +1093,33 @@ function GamenBody() {
 			d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
 		};
 		path.setAttribute('d',d);
+		var nearBreastClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+		nearBreastClipPath.id = 'nearBreastClipPath';
+		defs.appendChild(nearBreastClipPath);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		path.setAttribute('d',d);
+		nearBreastClipPath.appendChild(path);
+		var areolae = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearBreast.appendChild(areolae);
+		areolae.setAttribute('fill',areolaeTone);
+		areolae.setAttribute('stroke','none');
+		areolae.setAttribute('cx',nearAreolae.x);
+		areolae.setAttribute('cy',nearAreolae.y);
+		areolae.setAttribute('r',this.bio('areolaeWidth') * 10);
+		areolae.setAttribute('clip-path','url(#nearBreastClipPath)');
+		var nipplePuff = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearBreast.appendChild(nipplePuff);
+		nipplePuff.setAttribute('fill',areolaeTone);
+		nipplePuff.setAttribute('cx',nearAreolae.x);
+		nipplePuff.setAttribute('cy',nearAreolae.y);
+		nipplePuff.setAttribute('r',this.bio('nipplePuff') * 10);
+		var nipple = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearBreast.appendChild(nipple);
+		nipple.setAttribute('fill',areolaeTone);
+		var d = 'M ' + nearNippleTop.x + ',' + nearNippleTop.y + ' ';
+		d += 'c ' + nippleLength + ',' + 0 + ' ' + nippleLength + ',' + nippleWidth + ' ' + 0 + ',' + nippleWidth ;
+		nipple.setAttribute('d',d);
+		nipple.setAttribute('transform','rotate('+tilt+' '+nearAreolae.x+' '+nearAreolae.y+')');
 		
 		var belly = document.createElementNS('http://www.w3.org/2000/svg','g');
 		belly.id = 'belly';
@@ -1009,17 +1156,17 @@ function GamenBody() {
 		neck.setAttribute('stroke','inherit');
 		var neckPath = document.createElementNS('http://www.w3.org/2000/svg','polyline');
 		neck.appendChild(neckPath);
+		var neckWidth = this.bio('neckWidth')/0.7;
 		var neckPoints = [
-			{x:(2*neckBase.x + nearShoulder.x)/3,y:(2*neckBase.y + nearShoulder.y)/3},
+			{x:neckWidth*neckBase.x + nearShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + nearShoulder.y*(1-neckWidth) - neckHeight/2},
 			{x:headCenter.x+headSlide,y:headCenter.y},
-			{x:(2*neckBase.x + farShoulder.x)/3,y:(2*neckBase.y + farShoulder.y)/3},
+			{x:neckWidth*neckBase.x + farShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + farShoulder.y*(1-neckWidth) - neckHeight/2},
 		];
 		var neckPointsString = '';
 		for (var i in neckPoints) {
 			neckPointsString += neckPoints[i].x + ',' + neckPoints[i].y + ' ';
 		};
 		neckPath.setAttribute('points',neckPointsString);
-
 		
 		// Order the Stack
 		
@@ -1052,6 +1199,14 @@ function GamenBody() {
 		} else {
 			bodyParts = bodyParts.concat([farFoot,farCalf,farThigh]);
 		};
+		
+		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
+		if (lapSizedBreasts  && upperBodyAngle) {
+			bodyParts = bodyParts.concat([farBreast,nearBreast]);
+		} else if (lapSizedBreasts) {
+			bodyParts = bodyParts.concat([nearBreast,farBreast]);
+		};
+
 		
 		if (upperBodyAngle) {
 			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,farLowerArm,nearLowerArm]);
