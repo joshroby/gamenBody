@@ -420,11 +420,11 @@ function GamenBody() {
 			y:nearBreastAnchor.y + Math.max(breastSize,torsoHeight/3 * this.bio('breastSag')),
 		};
 		if (upperBodyAngle) {
-			farBreastCenter.x += breastSize/2;
-			nearBreastCenter.x += breastSize/2;
+			farBreastCenter.x += breastSize * 0.7;
+			nearBreastCenter.x += breastSize * 0.5;
 		} else {
-			farBreastCenter.x -= breastSize/2;
-			nearBreastCenter.x -= breastSize/2;
+			farBreastCenter.x -= breastSize * 0.5;
+			nearBreastCenter.x -= breastSize * 0.7;
 		};
 		if (upperBodyAngle) {
 			areolaeOffset = breastSize * 0.5;
@@ -663,7 +663,7 @@ function GamenBody() {
 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',farShoulder.x);
 		circle.setAttribute('cy',farShoulder.y);
-		circle.setAttribute('r',this.bio('bicep')*20);
+		circle.setAttribute('r',this.bio('bicep')*15);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		farUpperArm.appendChild(rect);
 		rect.setAttribute('x',(farShoulder.x+farShoulder.x+farElbow.x)/3-this.bio('armWidth') * 12 + this.bio('biceps')*2*(this.pose.farUpperArmLift-this.pose.farForearmLift));
@@ -704,7 +704,7 @@ function GamenBody() {
 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',nearShoulder.x);
 		circle.setAttribute('cy',nearShoulder.y);
-		circle.setAttribute('r',this.bio('bicep')*20);
+		circle.setAttribute('r',this.bio('bicep')*15);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		nearUpperArm.appendChild(rect);
 		rect.setAttribute('x',(nearShoulder.x+nearShoulder.x+nearElbow.x)/3-this.bio('armWidth') * 10 + this.bio('biceps')*2*(this.pose.nearUpperArmLift-this.pose.nearForearmLift));
@@ -871,12 +871,12 @@ function GamenBody() {
 		shoulders.appendChild(circle);
 		circle.setAttribute('cx',farShoulder.x);
 		circle.setAttribute('cy',farShoulder.y);
-		circle.setAttribute('r',this.bio('bicep')*20);
+		circle.setAttribute('r',this.bio('bicep')*15);
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 		shoulders.appendChild(circle);
 		circle.setAttribute('cx',nearShoulder.x);
 		circle.setAttribute('cy',nearShoulder.y);
-		circle.setAttribute('r',this.bio('bicep')*20);
+		circle.setAttribute('r',this.bio('bicep')*15);
 		var polyline = document.createElementNS('http://www.w3.org/2000/svg','polyline');
 		shoulders.appendChild(polyline);
 		var pointsArray = [
@@ -1019,7 +1019,7 @@ function GamenBody() {
 		nipplePuff.setAttribute('cy',farAreolae.y);
 		nipplePuff.setAttribute('r',this.bio('nipplePuff') * breastSize/3);
 		var nipplePuffClip = document.createElementNS('http://www.w3.org/2000/svg','circle');
-		farBreastClipPath.appendChild(nipplePuffClip);
+		farBreastClipPath.prepend(nipplePuffClip);
 		nipplePuffClip.setAttribute('cx',farAreolae.x);
 		nipplePuffClip.setAttribute('cy',farAreolae.y);
 		nipplePuffClip.setAttribute('r',this.bio('nipplePuff') * breastSize/3);
@@ -1116,7 +1116,7 @@ function GamenBody() {
 		nipplePuff.setAttribute('cy',nearAreolae.y);
 		nipplePuff.setAttribute('r',this.bio('nipplePuff') * breastSize/3);
 		var nipplePuffClip = document.createElementNS('http://www.w3.org/2000/svg','circle');
-		nearBreastClipPath.appendChild(nipplePuffClip);
+		nearBreastClipPath.prepend(nipplePuffClip);
 		nipplePuffClip.setAttribute('cx',nearAreolae.x);
 		nipplePuffClip.setAttribute('cy',nearAreolae.y);
 		nipplePuffClip.setAttribute('r',this.bio('nipplePuff') * breastSize/3);
@@ -1207,10 +1207,11 @@ function GamenBody() {
 		bodyParts = bodyParts.concat([torso,scrotum,phallus,belly]);
 		
 		bodyParts = bodyParts.concat([neck,headGroup]);
-		
-		if (upperBodyAngle) {
+
+		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
+		if (!lapSizedBreasts && upperBodyAngle) {
 			bodyParts = bodyParts.concat([farBreast,nearBreast]);
-		} else {
+		} else if (!lapSizedBreasts) {
 			bodyParts = bodyParts.concat([nearBreast,farBreast]);
 		};
 		
@@ -1220,7 +1221,6 @@ function GamenBody() {
 			bodyParts = bodyParts.concat([farFoot,farCalf,farThigh]);
 		};
 		
-		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
 		if (lapSizedBreasts  && upperBodyAngle) {
 			bodyParts = bodyParts.concat([farBreast,nearBreast]);
 		} else if (lapSizedBreasts) {
@@ -1247,7 +1247,7 @@ function GamenBody() {
 			};
 			svg.appendChild(i);
 		};
-								
+										
 		return svg;
 	};
 };
