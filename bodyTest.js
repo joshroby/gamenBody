@@ -131,6 +131,12 @@ function GamenBody() {
 			coefficient: 170,
 			curve: 'bell',
 		},
+	
+		buttSize: {
+			root: 1.08,
+			coefficient: 170,
+			curve: 'bell',
+		},
 		
 		calfWidth: {
 			root: 1.07,
@@ -316,16 +322,39 @@ function GamenBody() {
 		var forearmLength = 0.5 * armLength;
 		var thighLength = 0.5 * legHeight;
 		var calfLength = 0.5 * legHeight;
-		var footLength = 0.14 * totalHeight;
+		var footLength = 0.12 * totalHeight * this.bio('footLength');
 		var nearLegHeight = Math.sin(pose.hipsCant) * hipsWidth/2 + Math.max(0,Math.cos(pose.nearThighLift) * thighLength) + Math.max(0,Math.cos(pose.nearKneeBend) * calfLength);
 		var farLegHeight = Math.sin(pose.hipsCant) * hipsWidth/-2 + Math.max(0,Math.cos(pose.farThighLift) * thighLength) + Math.max(0,Math.cos(pose.farKneeBend) * calfLength);
 		var pelvisHeight = Math.max(nearLegHeight,farLegHeight) * -1;
 		var shouldersHeight = pelvisHeight - torsoHeight;
 		var headCenter = {x:0,y:shouldersHeight - neckHeight - headHeight/2};
-		
+		var breastSize = this.bio('breastSize') * 20;
+				
 		// Colors
 		var skinTone = this.skinTone;
 		var areolaeTone = this.areolaeTone;
+
+		// Orientation
+		var upperBodyAngle ;
+		if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift >= 0) {
+			upperBodyAngle = true;
+		} else if (pose.farUpperArmLift <= 0 && pose.nearUpperArmLift <= 0) {
+			upperBodyAngle = false;
+		} else if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift <= 0 && Math.abs(pose.farUpperArmLift) > Math.abs(pose.nearUpperArmLift) ) {
+			upperBodyAngle = true;
+		} else {
+			upperBodyAngle = false;
+		};
+		var lowerBodyAngle ;
+		if (pose.farThighLift > 0 && pose.nearThighLift > 0) {
+			lowerBodyAngle = true;
+		} else if (pose.farThighLift < 0 && pose.nearThighLift < 0) {
+			lowerBodyAngle = false;
+		} else if (pose.farThighLift > 0 && pose.nearThighLift < 0 && Math.abs(pose.farThighLift) > Math.abs(pose.nearThighLift) ) {
+			lowerBodyAngle = true;
+		} else {
+			lowerBodyAngle = false;
+		};
 
 		// Joints and Points
 		var nearHip = {
@@ -352,8 +381,29 @@ function GamenBody() {
 			x: farKnee.x + Math.sin(pose.farKneeBend)*calfLength,
 			y: farKnee.y + Math.cos(pose.farKneeBend)*calfLength,
 		};
-		var neckBase = {x:0,y:pelvisHeight - torsoHeight};
-		var spineBase = {x:0,y:pelvisHeight};
+		var nearFootAngle = Math.PI/3;
+		var farFootAngle = Math.PI/3;
+		if (!lowerBodyAngle) {
+			nearFootAngle *= -1;
+			farFootAngle *= -1;
+		};
+		var nearToes = {
+			x: nearAnkle.x + Math.sin(nearFootAngle)*footLength,
+			y: nearAnkle.y + Math.cos(nearFootAngle)*footLength,
+		};
+		var farToes = {
+			x: farAnkle.x + Math.sin(farFootAngle)*footLength,
+			y: farAnkle.y + Math.cos(farFootAngle)*footLength,
+		};
+		
+		var neckBase = {
+			x:0,
+			y:pelvisHeight - torsoHeight
+		};
+		var spineBase = {
+			x:0,
+			y:pelvisHeight
+		};
 		var neckBase = {
 			x:0,
 			y:pelvisHeight - torsoHeight
@@ -382,30 +432,9 @@ function GamenBody() {
 			x: farElbow.x + Math.sin(pose.farForearmLift)*forearmLength,
 			y: farElbow.y + Math.cos(pose.farForearmLift)*forearmLength,
 		};
-		var upperBodyAngle ;
-		if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift >= 0) {
-			upperBodyAngle = true;
-		} else if (pose.farUpperArmLift <= 0 && pose.nearUpperArmLift <= 0) {
-			upperBodyAngle = false;
-		} else if (pose.farUpperArmLift >= 0 && pose.nearUpperArmLift <= 0 && Math.abs(pose.farUpperArmLift) > Math.abs(pose.nearUpperArmLift) ) {
-			upperBodyAngle = true;
-		} else {
-			upperBodyAngle = false;
-		};
-		var lowerBodyAngle ;
-		if (pose.farThighLift > 0 && pose.nearThighLift > 0) {
-			lowerBodyAngle = true;
-		} else if (pose.farThighLift < 0 && pose.nearThighLift < 0) {
-			lowerBodyAngle = false;
-		} else if (pose.farThighLift > 0 && pose.nearThighLift < 0 && Math.abs(pose.farThighLift) > Math.abs(pose.nearThighLift) ) {
-			lowerBodyAngle = true;
-		} else {
-			lowerBodyAngle = false;
-		};
-		var breastSize = this.bio('breastSize') * 20;
 		var farBreastAnchor = {
 			x:farShoulder.x/2,
-			y:neckBase.y + torsoHeight/8,
+			y:neckBase.y,
 		};
 		var farBreastCenter = {
 			x:farShoulder.x/2,
@@ -413,7 +442,7 @@ function GamenBody() {
 		};
 		var nearBreastAnchor = {
 			x:nearShoulder.x/2,
-			y:neckBase.y + torsoHeight/8,
+			y:neckBase.y,
 		};
 		var nearBreastCenter = {
 			x:nearShoulder.x/2,
@@ -459,12 +488,14 @@ function GamenBody() {
 // 		var legs = document.createElementNS('http://www.w3.org/2000/svg','polyline');
 // 		wireframe.appendChild(legs);
 // 		var pointsArray = [
+// 			nearToes,
 // 			nearAnkle,
 // 			nearKnee,
 // 			nearHip,
 // 			farHip,
 // 			farKnee,
 // 			farAnkle,
+// 			farToes,
 // 		];
 // 		var pointsString = '';
 // 		for (var p of pointsArray) {
@@ -502,7 +533,7 @@ function GamenBody() {
 // 		arms.setAttribute('points',pointsString);
 // 		arms.setAttribute('stroke','black');
 // 		arms.setAttribute('fill','none');
-		
+// 		
 // 		var head = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
 // 		wireframe.appendChild(head);
 // 		head.setAttribute('cx',0);
@@ -611,6 +642,13 @@ function GamenBody() {
 		circle.setAttribute('cx',farKnee.x);
 		circle.setAttribute('cy',farKnee.y);
 		circle.setAttribute('r',this.bio('thighWidth') * 15);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farThigh.appendChild(path);
+		var leftX = ((3*farHip.x+spineBase.x)/4) - this.bio('hipsWidth')*30;
+		var rightX = ((3*farHip.x+spineBase.x)/4) + this.bio('hipsWidth')*30;
+		d = 'M '+leftX+','+((3*farHip.y+spineBase.y)/4);
+		d += ' A '+(this.bio('hipsWidth')*30)+','+(this.bio('hipsWidth')*30)+' 1 1 0 '+rightX+','+((3*farHip.y+spineBase.y)/4);
+		path.setAttribute('d',d);
 		
 		var nearThigh = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearThigh.id = 'nearThigh';
@@ -638,21 +676,44 @@ function GamenBody() {
 		circle.setAttribute('cx',nearKnee.x);
 		circle.setAttribute('cy',nearKnee.y);
 		circle.setAttribute('r',this.bio('thighWidth') * 15);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearThigh.appendChild(path);
+		var leftX = ((3*nearHip.x+spineBase.x)/4) - this.bio('hipsWidth')*30;
+		var rightX = ((3*nearHip.x+spineBase.x)/4) + this.bio('hipsWidth')*30;
+		d = 'M '+leftX+','+((3*nearHip.y+spineBase.y)/4);
+		d += ' A '+(this.bio('hipsWidth')*30)+','+(this.bio('hipsWidth')*30)+' 1 1 0 '+rightX+','+((3*nearHip.y+spineBase.y)/4);
+		path.setAttribute('d',d);
 
 		var butt = document.createElementNS('http://www.w3.org/2000/svg','g');
 		butt.id = 'butt';
 		butt.setAttribute('fill',skinTone);
 		butt.setAttribute('stroke','inherit');
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		var buttLift = this.bio('buttSize')*20 - this.bio('hipsWidth')*30;
+		if (lowerBodyAngle) {
+			var buttSway = this.bio('buttSize')*-10;
+		} else {
+			var buttSway = this.bio('buttSize')*10;
+		};
+		butt.appendChild(circle);
+		circle.setAttribute('cx',(3*nearHip.x+spineBase.x)/4 + buttSway);
+		circle.setAttribute('cy',(3*nearHip.y+spineBase.y)/4 - buttLift);
+		circle.setAttribute('r',this.bio('buttSize')*20);
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		butt.appendChild(circle);
+		circle.setAttribute('cx',(3*farHip.x+spineBase.x)/4 + buttSway);
+		circle.setAttribute('cy',(3*farHip.y+spineBase.y)/4 - buttLift);
+		circle.setAttribute('r',this.bio('buttSize')*20);
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 		butt.appendChild(circle);
 		circle.setAttribute('cx',(3*nearHip.x+spineBase.x)/4);
 		circle.setAttribute('cy',(3*nearHip.y+spineBase.y)/4);
-		circle.setAttribute('r',this.bio('hipsWidth') * 30);
+		circle.setAttribute('r',this.bio('hipsWidth')*30);
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 		butt.appendChild(circle);
 		circle.setAttribute('cx',(3*farHip.x+spineBase.x)/4);
 		circle.setAttribute('cy',(3*farHip.y+spineBase.y)/4);
-		circle.setAttribute('r',this.bio('hipsWidth') * 30);
+		circle.setAttribute('r',this.bio('hipsWidth')*30);
 		
 		var farUpperArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farUpperArm.id = 'farUpperArm';
@@ -841,7 +902,7 @@ function GamenBody() {
 		var pelvis = document.createElementNS('http://www.w3.org/2000/svg','path');
 		torso.appendChild(pelvis);
 		var startX = hipsWidth * 0.4;
-		var startY = pelvisHeight - hipsWidth * 0.25;
+		var startY = pelvisHeight;
 		var d = 'M'+startX+','+startY;
 		var dc1x = -0.1 * hipsWidth;
 		var dc1y = 0.2 * hipsWidth;
@@ -860,8 +921,6 @@ function GamenBody() {
 		pelvis.setAttribute('d',d);
 		tilt = this.pose.hipsCant * -180/Math.PI;
 		pelvis.setAttribute('transform','rotate('+tilt+' 0 '+pelvisHeight+')');
-		var trunk = document.createElementNS('http://www.w3.org/2000/svg','path');
-		torso.appendChild(trunk);
 		
 		var shoulders = document.createElementNS('http://www.w3.org/2000/svg','g');
 		shoulders.id = 'shoulders';
@@ -890,68 +949,6 @@ function GamenBody() {
 		};
 		polyline.setAttribute('points',pointsString);
 
-		var farFoot = document.createElementNS('http://www.w3.org/2000/svg','g');
-		farFoot.id = 'farFoot';
-		farFoot.setAttribute('fill',skinTone);
-		farFoot.setAttribute('stroke','inherit');
-		var heel = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		farFoot.appendChild(heel);
-		heel.setAttribute('x',farAnkle.x-15);
-		heel.setAttribute('y',farAnkle.y-15);
-		heel.setAttribute('height',30);
-		heel.setAttribute('width',30);
-		heel.setAttribute('rx',30);
-		heel.setAttribute('ry',30);
-		var toes = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		farFoot.appendChild(toes);
-		toes.setAttribute('stroke','black');
-		toes.setAttribute('paint-order','stroke fill');
-		toes.setAttribute('stroke-width','6');
-		toes.setAttribute('x',farAnkle.x-15);
-		toes.setAttribute('y',farAnkle.y+5);
-		toes.setAttribute('height',15);
-		toes.setAttribute('width',40);
-		toes.setAttribute('rx',6);
-		toes.setAttribute('ry',6);
-		if (farAnkle.y < -1) {
-			tilt = pose.farKneeBend * -180/Math.PI;
-			farFoot.setAttribute('transform','rotate('+tilt+' '+farAnkle.x+' '+farAnkle.y+')');
-			if (pose.farFootPoint > 0) {
-				toes.setAttribute('height',15 * (1 + pose.farFootPoint/2));
-			};
-		};
-				
-		var nearFoot = document.createElementNS('http://www.w3.org/2000/svg','g');
-		nearFoot.id = 'nearFoot';
-		nearFoot.setAttribute('fill',skinTone);
-		nearFoot.setAttribute('stroke','inherit');
-		var heel = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		nearFoot.appendChild(heel);
-		heel.setAttribute('x',nearAnkle.x-15);
-		heel.setAttribute('y',nearAnkle.y-15);
-		heel.setAttribute('height',30);
-		heel.setAttribute('width',30);
-		heel.setAttribute('rx',30);
-		heel.setAttribute('ry',30);
-		var toes = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		nearFoot.appendChild(toes);
-		toes.setAttribute('stroke','black');
-		toes.setAttribute('paint-order','stroke fill');
-		toes.setAttribute('stroke-width','6');
-		toes.setAttribute('x',nearAnkle.x-25);
-		toes.setAttribute('y',nearAnkle.y+5);
-		toes.setAttribute('height',15);
-		toes.setAttribute('width',40);
-		toes.setAttribute('rx',6);
-		toes.setAttribute('ry',6);
-		if (nearAnkle.y < -1) {
-			tilt = pose.nearKneeBend * -180/Math.PI;
-			nearFoot.setAttribute('transform','rotate('+tilt+' '+nearAnkle.x+' '+nearAnkle.y+')');
-			if (pose.nearFootPoint > 0) {
-				toes.setAttribute('height',15 * (1 + pose.nearFootPoint/2));
-			};
-		};				
-		
 		var farBreast = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farBreast.id = 'farBreast';
 		farBreast.setAttribute('fill',skinTone);
@@ -1187,7 +1184,99 @@ function GamenBody() {
 			neckPointsString += neckPoints[i].x + ',' + neckPoints[i].y + ' ';
 		};
 		neckPath.setAttribute('points',neckPointsString);
-		
+
+		var farFoot = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farFoot.id = 'farFoot';
+		farFoot.setAttribute('fill',skinTone);
+		farFoot.setAttribute('stroke','inherit');
+		var heel = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		farFoot.appendChild(heel);
+		heel.setAttribute('x',farAnkle.x-10);
+		heel.setAttribute('y',farAnkle.y-10);
+		heel.setAttribute('width',20);
+		heel.setAttribute('height',20);
+		heel.setAttribute('rx',8);
+		heel.setAttribute('ry',8);
+		var footFront = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+		farFoot.appendChild(footFront);
+		var footPoints = [
+			{x:farAnkle.x,y:farAnkle.y-10},
+			{x:farToes.x,y:(farAnkle.y + 2*farToes.y)/3},
+			farToes,
+			{x:(farAnkle.x + 2*farToes.x)/3,y:farToes.y},
+			{x:farAnkle.x,y:farAnkle.y+10},
+		];
+		var footPointsString = '';
+		for (var i in footPoints) {
+			footPointsString += footPoints[i].x + ',' + footPoints[i].y + ' ';
+		};
+		footFront.setAttribute('points',footPointsString);
+		var bigToe = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farFoot.appendChild(bigToe);
+		bigToe.setAttribute('cx',farToes.x);
+		bigToe.setAttribute('cy',(farAnkle.y + 5*farToes.y)/6);
+		bigToe.setAttribute('r',5);
+		var tendon = document.createElementNS('http://www.w3.org/2000/svg','polyline')
+		farFoot.appendChild(tendon);
+		var footPoints = [
+			{x:(4*farAnkle.x+farKnee.x)/5,y:(4*farAnkle.y+farKnee.y)/5},
+			farToes,
+			farAnkle,
+		];
+		var footPointsString = '';
+		for (var i in footPoints) {
+			footPointsString += footPoints[i].x + ',' + footPoints[i].y + ' ';
+		};
+		tendon.setAttribute('points',footPointsString);
+		var tilt = pose.farFootPoint * -180/Math.PI / 6;
+		farFoot.setAttribute('transform','rotate('+tilt+' '+farAnkle.x+' '+farAnkle.y+')');
+				
+		var nearFoot = document.createElementNS('http://www.w3.org/2000/svg','g');
+		nearFoot.id = 'nearFoot';
+		nearFoot.setAttribute('fill',skinTone);
+		nearFoot.setAttribute('stroke','inherit');
+		var heel = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		nearFoot.appendChild(heel);
+		heel.setAttribute('x',nearAnkle.x-10);
+		heel.setAttribute('y',nearAnkle.y-10);
+		heel.setAttribute('width',20);
+		heel.setAttribute('height',20);
+		heel.setAttribute('rx',8);
+		heel.setAttribute('ry',8);
+		var footFront = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+		nearFoot.appendChild(footFront);
+		var footPoints = [
+			{x:nearAnkle.x,y:nearAnkle.y-10},
+			{x:nearToes.x,y:(nearAnkle.y + 2*nearToes.y)/3},
+			nearToes,
+			{x:(nearAnkle.x + 2*nearToes.x)/3,y:nearToes.y},
+			{x:nearAnkle.x,y:nearAnkle.y+10},
+		];
+		var footPointsString = '';
+		for (var i in footPoints) {
+			footPointsString += footPoints[i].x + ',' + footPoints[i].y + ' ';
+		};
+		footFront.setAttribute('points',footPointsString);
+		var bigToe = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearFoot.appendChild(bigToe);
+		bigToe.setAttribute('cx',nearToes.x);
+		bigToe.setAttribute('cy',(nearAnkle.y + 5*nearToes.y)/6);
+		bigToe.setAttribute('r',5);
+		var tendon = document.createElementNS('http://www.w3.org/2000/svg','polyline')
+		nearFoot.appendChild(tendon);
+		var footPoints = [
+			{x:(4*nearAnkle.x+nearKnee.x)/5,y:(4*nearAnkle.y+nearKnee.y)/5},
+			nearToes,
+			nearAnkle,
+		];
+		var footPointsString = '';
+		for (var i in footPoints) {
+			footPointsString += footPoints[i].x + ',' + footPoints[i].y + ' ';
+		};
+		tendon.setAttribute('points',footPointsString);	
+		var tilt = pose.nearFootPoint * -180/Math.PI / 6;
+		nearFoot.setAttribute('transform','rotate('+tilt+' '+nearAnkle.x+' '+nearAnkle.y+')');
+					
 		// Order the Stack
 		
 		var bodyParts = [hair,shoulders];
