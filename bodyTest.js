@@ -103,13 +103,25 @@ function GamenBody() {
 		},
 	
 		belly: {
-			root: 1.07,
+			root: 1.15,
 			coefficient: 170,
 			curve: 'bell',
 		},
 	
 		biceps: {
 			root: 1.05,
+			coefficient: 170,
+			curve: 'bell',
+		},
+	
+		breastSize: {
+			root: 1.15,
+			coefficient: 170,
+			curve: 'bell',
+		},
+	
+		breastSag: {
+			root: 1.09,
 			coefficient: 170,
 			curve: 'bell',
 		},
@@ -317,6 +329,50 @@ function GamenBody() {
 		var farWrist = {
 			x: farElbow.x + Math.sin(pose.farForearmLift)*forearmLength,
 			y: farElbow.y + Math.cos(pose.farForearmLift)*forearmLength,
+		};
+		var upperBodyAngle ;
+		if (pose.farUpperArmLift > 0 && pose.nearUpperArmLift > 0) {
+			upperBodyAngle = true;
+		} else if (pose.farUpperArmLift < 0 && pose.nearUpperArmLift < 0) {
+			upperBodyAngle = false;
+		} else if (pose.farUpperArmLift > 0 && pose.nearUpperArmLift < 0 && Math.abs(pose.farUpperArmLift) > Math.abs(pose.nearUpperArmLift) ) {
+			upperBodyAngle = true;
+		} else {
+			upperBodyAngle = false;
+		};
+		var lowerBodyAngle ;
+		if (pose.farThighLift > 0 && pose.nearThighLift > 0) {
+			lowerBodyAngle = true;
+		} else if (pose.farThighLift < 0 && pose.nearThighLift < 0) {
+			lowerBodyAngle = false;
+		} else if (pose.farThighLift > 0 && pose.nearThighLift < 0 && Math.abs(pose.farThighLift) > Math.abs(pose.nearThighLift) ) {
+			lowerBodyAngle = true;
+		} else {
+			lowerBodyAngle = false;
+		};
+		var breastSize = this.bio('breastSize') * 20;
+		var farBreastAnchor = {
+			x:farShoulder.x/2,
+			y:neckBase.y + torsoHeight/6,
+		};
+		var farBreastCenter = {
+			x:farShoulder.x/2,
+			y:farBreastAnchor.y + Math.max(breastSize,torsoHeight/3 * this.bio('breastSag')),
+		};
+		var nearBreastAnchor = {
+			x:nearShoulder.x/2,
+			y:neckBase.y + torsoHeight/6,
+		};
+		var nearBreastCenter = {
+			x:nearShoulder.x/2,
+			y:nearBreastAnchor.y + Math.max(breastSize,torsoHeight/3 * this.bio('breastSag')),
+		};
+		if (upperBodyAngle) {
+			farBreastCenter.x += this.bio('breastSize') * 10;
+			nearBreastCenter.x += this.bio('breastSize') * 10;
+		} else {
+			farBreastCenter.x -= this.bio('breastSize') * 10;
+			nearBreastCenter.x -= this.bio('breastSize') * 10;
 		};
 		
 //		Wireframe (Old)
@@ -819,14 +875,118 @@ function GamenBody() {
 		};				
 		
 		var farBreast = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farBreast.id = 'farBreast';
+		farBreast.setAttribute('fill',skinTone);
+		farBreast.setAttribute('stroke','inherit');
+		var shoulderTipDegrees = pose.shouldersTip * -180/Math.PI;
+// 		farBreast.setAttribute('transform','rotate('+shoulderTipDegrees+' '+farBreastCenter.x+' '+farBreastCenter.y+')');
+// 		var sphere = document.createElementNS('http://www.w3.org/2000/svg','circle');
+// 		farBreast.appendChild(sphere);
+// 		sphere.setAttribute('stroke','none');
+// 		sphere.setAttribute('cx',farBreastCenter.x);
+// 		sphere.setAttribute('cy',farBreastCenter.y);
+// 		sphere.setAttribute('r',this.bio('breastSize')*20);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farBreast.appendChild(path);
+		var c1x, c1y, x, y, c2x, c2y;
+		var d = 'M' + farBreastAnchor.x + " " + farBreastAnchor.y;
+		var cathetus = this.bio('breastSize') * 10 * Math.pow(2,0.5);
+		var control = 0.5522847 * this.bio('breastSize') * 10 * Math.pow(2,0.5);
+		c1x = farBreastAnchor.x;
+		c1y = farBreastAnchor.y;
+		x = farBreastCenter.x + cathetus;
+		y = farBreastCenter.y - cathetus;
+		c2x = x - control;
+		c2y = y - control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		c1x = farBreastCenter.x + cathetus + control;
+		c1y = farBreastCenter.y - cathetus + control;
+		x = farBreastCenter.x + cathetus;
+		y = farBreastCenter.y + cathetus;
+		c2x = x + control;
+		c2y = y - control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		c1x = farBreastCenter.x + cathetus - control;
+		c1y = farBreastCenter.y + cathetus + control;
+		x = farBreastCenter.x - cathetus;
+		y = farBreastCenter.y + cathetus;
+		c2x = x + control;
+		c2y = y + control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		if (!upperBodyAngle) {
+			c1x = farBreastCenter.x - cathetus - control;
+			c1y = farBreastCenter.y + cathetus - control;
+			x = farBreastCenter.x - cathetus;
+			y = farBreastCenter.y - cathetus;
+			c2x = x - control;
+			c2y = y + control;
+			d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		};
+		path.setAttribute('d',d);
+		
 		
 		var nearBreast = document.createElementNS('http://www.w3.org/2000/svg','g');
+		nearBreast.id = 'nearBreast';
+		nearBreast.setAttribute('fill',skinTone);
+		nearBreast.setAttribute('stroke','inherit');
+// 		nearBreast.setAttribute('transform','rotate('+shoulderTipDegrees+' '+nearBreastCenter.x+' '+nearBreastCenter.y+')');
+// 		var sphere = document.createElementNS('http://www.w3.org/2000/svg','circle');
+// 		nearBreast.appendChild(sphere);
+// 		sphere.setAttribute('stroke','none');
+// 		sphere.setAttribute('cx',nearBreastCenter.x);
+// 		sphere.setAttribute('cy',nearBreastCenter.y);
+// 		sphere.setAttribute('r',this.bio('breastSize')*20);
+		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearBreast.appendChild(path);
+		var c1x, c1y, x, y, c2x, c2y;
+		var d = 'M' + nearBreastAnchor.x + " " + nearBreastAnchor.y;
+		var cathetus = this.bio('breastSize') * 10 * Math.pow(2,0.5);
+		var control = 0.5522847 * this.bio('breastSize') * 10 * Math.pow(2,0.5);
+		c1x = nearBreastAnchor.x;
+		c1y = nearBreastAnchor.y;
+		x = nearBreastCenter.x - cathetus;
+		y = nearBreastCenter.y - cathetus;
+		c2x = x + control;
+		c2y = y - control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		c1x = nearBreastCenter.x - cathetus - control;
+		c1y = nearBreastCenter.y - cathetus + control;
+		x = nearBreastCenter.x - cathetus;
+		y = nearBreastCenter.y + cathetus;
+		c2x = x - control;
+		c2y = y - control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		c1x = nearBreastCenter.x - cathetus + control;
+		c1y = nearBreastCenter.y + cathetus + control;
+		x = nearBreastCenter.x + cathetus;
+		y = nearBreastCenter.y + cathetus;
+		c2x = x - control;
+		c2y = y + control;
+		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		if (upperBodyAngle) {
+			c1x = nearBreastCenter.x + cathetus + control;
+			c1y = nearBreastCenter.y + cathetus - control;
+			x = nearBreastCenter.x + cathetus;
+			y = nearBreastCenter.y - cathetus;
+			c2x = x + control;
+			c2y = y + control;
+			d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
+		};
+		path.setAttribute('d',d);
+		
+		var belly = document.createElementNS('http://www.w3.org/2000/svg','g');
+		belly.id = 'belly';
+		belly.setAttribute('fill',skinTone);
+		belly.setAttribute('stroke','inherit');
+// 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+// 		belly.appendChild(circle);
+// 		circle.setAttribute('cx',0);
+// 		circle.setAttribute('cy',neckBase.y + 3*torsoHeight/4);
+// 		circle.setAttribute('r',this.bio('belly')*20);
 		
 		var scrotum = document.createElementNS('http://www.w3.org/2000/svg','g');
 		
 		var phallus = document.createElementNS('http://www.w3.org/2000/svg','g');
-		
-		var belly = document.createElementNS('http://www.w3.org/2000/svg','g');
 		
 		var headGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
 		headGroup.id = 'headGroup';
@@ -861,9 +1021,46 @@ function GamenBody() {
 		neckPath.setAttribute('points',neckPointsString);
 
 		
-		// Eventually will stack these according to a processed z-precedence
+		// Order the Stack
 		
-		var bodyParts = [hair,butt,shoulders,farFoot,farCalf,farThigh,farElbowJoint,farUpperArm,farLowerArm,torso,farBreast,nearBreast,scrotum,phallus,belly,nearFoot,nearCalf,nearThigh,neck,headGroup,nearElbowJoint,nearUpperArm,nearLowerArm];
+		var bodyParts = [hair,shoulders];
+		
+		if (lowerBodyAngle) {
+			bodyParts = bodyParts.concat([butt,farFoot,farCalf,farThigh]);
+		} else {
+			bodyParts = bodyParts.concat([butt,nearFoot,nearCalf,nearThigh]);
+		};
+		
+		if (upperBodyAngle) {
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm]);
+		} else {
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm]);
+		};
+		
+		bodyParts = bodyParts.concat([torso,scrotum,phallus,belly]);
+		
+		bodyParts = bodyParts.concat([neck,headGroup]);
+		
+		if (upperBodyAngle) {
+			bodyParts = bodyParts.concat([farBreast,nearBreast]);
+		} else {
+			bodyParts = bodyParts.concat([nearBreast,farBreast]);
+		};
+		
+		if (lowerBodyAngle) {
+			bodyParts = bodyParts.concat([nearFoot,nearCalf,nearThigh]);
+		} else {
+			bodyParts = bodyParts.concat([farFoot,farCalf,farThigh]);
+		};
+		
+		if (upperBodyAngle) {
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,farLowerArm,nearLowerArm]);
+		} else {
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,nearLowerArm]);
+		};
+
+		// Special Render Order Goes Here (for hands behind back or similar exceptions)
+
 		for (var i of bodyParts) {
 			if (i.id !== '') {
 				var stroke = document.createElementNS('http://www.w3.org/2000/svg','use');
