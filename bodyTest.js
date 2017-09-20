@@ -871,38 +871,8 @@ function GamenBody() {
 		torso.id = 'torso';
 		torso.setAttribute('fill',skinTone);
 		torso.setAttribute('stroke','inherit');
-// 		var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-// 		torso.appendChild(polygon);
-// 		polygon.setAttribute('stroke','none');
-// 		polygon.setAttribute('fill','red');
-// 		var pointsArray = [
-// 			{x:nearHip.x,y:nearHip.y - this.bio('hipsWidth') * 30},
-// 			nearShoulder,
-// 			{x:(neckBase.x + headCenter.x)/2,y:(neckBase.y + headCenter.y)/2},
-// 			farShoulder,
-// 			{x:farHip.x,y:farHip.y - this.bio('hipsWidth') * 30},
-// 			{x:0,y:pelvisHeight}
-// 		];
-// 		var pointsString = '';
-// 		for (var i of pointsArray) {
-// 			pointsString += i.x + ',' + i.y + ' ';
-// 		};
-// 		polygon.setAttribute('points',pointsString);
-// 		var rightSide = document.createElementNS('http://www.w3.org/2000/svg','line');
-// 		torso.appendChild(rightSide);
-// 		rightSide.setAttribute('x1',nearHip.x);
-// 		rightSide.setAttribute('y1',nearHip.y - this.bio('hipsWidth') * 30);
-// 		rightSide.setAttribute('x2',nearShoulder.x);
-// 		rightSide.setAttribute('y2',nearShoulder.y);
-// 		var leftSide = document.createElementNS('http://www.w3.org/2000/svg','line');
-// 		torso.appendChild(leftSide);
-// 		leftSide.setAttribute('x1',farHip.x);
-// 		leftSide.setAttribute('y1',farHip.y - this.bio('hipsWidth') * 30);
-// 		leftSide.setAttribute('x2',farShoulder.x);
-// 		leftSide.setAttribute('y2',farShoulder.y);
 		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
 		path.setAttribute('stroke','none');
-// 		path.setAttribute('fill','none');
 		var farSide = document.createElementNS('http://www.w3.org/2000/svg','path');
 		farSide.setAttribute('fill','none');
 		torso.appendChild(farSide);
@@ -1110,7 +1080,6 @@ function GamenBody() {
 		};
 		nipple.setAttribute('transform','rotate('+tilt+' '+farAreolae.x+' '+farAreolae.y+')');
 		
-		
 		var nearBreast = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearBreast.id = 'nearBreast';
 		nearBreast.setAttribute('fill',skinTone);
@@ -1206,11 +1175,93 @@ function GamenBody() {
 		belly.id = 'belly';
 		belly.setAttribute('fill',skinTone);
 		belly.setAttribute('stroke','inherit');
-// 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-// 		belly.appendChild(circle);
-// 		circle.setAttribute('cx',0);
-// 		circle.setAttribute('cy',neckBase.y + 3*torsoHeight/4);
-// 		circle.setAttribute('r',this.bio('belly')*20);
+		var bellySize = this.bio('belly') * 40;
+		var bellyOffset = (bellySize/3);
+		if (!upperBodyAngle) {
+			bellyOffset *= -1;
+		};
+		var farBellyTop = {
+			x:(farBreastAnchor.x+farBreastCenter.x)/2,
+			y:(farBreastAnchor.y+farBreastCenter.y)/2,
+		};
+		var nearBellyTop = {
+			x: (nearBreastAnchor.x+nearBreastCenter.x)/2,
+			y: (nearBreastAnchor.y+nearBreastCenter.y)/2,
+		};
+		var bellyBottom = {
+			x: bellyOffset,
+			y:shouldersHeight+torsoHeight + Math.max(bellySize-40,0),
+		};
+		var farBellyBottom = {
+			x:bellyBottom.x + Math.max(bellySize-40,0),
+			y:bellyBottom.y + Math.max(bellySize-40,0)/3,
+		};
+		var nearBellyBottom = {
+			x: bellyBottom.x - Math.max(bellySize-40,0),
+			y: bellyBottom.y + Math.max(bellySize-40,0)/3,
+		};
+		var farBellySide = {
+			x: (farBellyBottom.x + farBellyTop.x)/2 + bellyOffset + this.bio('belly')*20-20,
+			y: (bellyBottom.y + farBellyTop.y)/2 - this.bio('belly')*20+20,
+		};
+		var nearBellySide = {
+			x: (nearBellyBottom.x + nearBellyTop.x)/2 + bellyOffset - this.bio('belly')*20+20,
+			y: (bellyBottom.y + nearBellyTop.y)/2 - this.bio('belly')*20+20,
+		};
+		if (!upperBodyAngle) {
+			farBellySide.x += bellySize * 2/3;
+		} else {
+			nearBellySide.x -= bellySize * 2/3;
+		};
+		var bellyTriangle = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+		belly.appendChild(bellyTriangle);
+		bellyTriangle.setAttribute('stroke',skinTone);
+		var points = [nearBellyTop,bellyBottom,farBellyTop];
+		var pointsString = '';
+		for (var p in points) {
+			pointsString += points[p].x + ',' + points[p].y + ' ';
+		};
+		bellyTriangle.setAttribute('points',pointsString);
+		var farPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+		belly.appendChild(farPath);
+		farPath.id = 'farPath';
+		var nearPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+		belly.appendChild(nearPath);
+		var farD = 'M ' + farBellyTop.x + ',' + farBellyTop.y + ' ' ;
+		var nearD = 'M ' + nearBellyTop.x + ',' + nearBellyTop.y + ' ';
+		farD += 'C '+farBellyTop.x+' '+farBellyTop.y+' ' + (farBellySide.x - bellySize/4) + ' '+(farBellySide.y-bellySize/2)+' '+farBellySide.x + ' ' + farBellySide.y;
+		nearD += 'C '+nearBellyTop.x+' '+nearBellyTop.y+' '+(nearBellySide.x + bellySize/4)+' '+(nearBellySide.y-bellySize/2)+' '+nearBellySide.x + ' ' + nearBellySide.y;
+		farD += 'C '+farBellySide.x+' '+farBellySide.y+' ' + (farBellyBottom.x+bellySize) + ' '+farBellyBottom.y+' '+farBellyBottom.x + ' ' + farBellyBottom.y;
+		nearD += 'C '+nearBellySide.x+' '+nearBellySide.y+' '+(nearBellyBottom.x-bellySize)+' '+nearBellyBottom.y+' '+nearBellyBottom.x + ' ' + nearBellyBottom.y;
+		farD += 'C '+farBellyBottom.x+' '+farBellyBottom.y+' ' + bellyBottom.x + ' '+bellyBottom.y+' '+bellyBottom.x + ' ' + bellyBottom.y;
+		nearD += 'C '+nearBellyBottom.x+' '+nearBellyBottom.y+' '+bellyBottom.x+' '+bellyBottom.y+' '+bellyBottom.x + ' ' + bellyBottom.y;
+		farPath.setAttribute('d',farD);
+		nearPath.setAttribute('d',nearD);
+		
+		var navel = document.createElementNS('http://www.w3.org/2000/svg','path');
+		belly.appendChild(navel);
+		var path = 'M '+(bellyOffset*2)+'0';
+		var nearTopAb = {
+			x: nearBreastAnchor.x,
+			y: nearShoulder.y + torsoHeight*0.4,
+		};
+		var farTopAb = {
+			x: farBreastAnchor.x,
+			y: farShoulder.y + torsoHeight*0.4,
+		};
+		console.log(torsoHeight);
+		var step = (Math.max(farTopAb.y,nearTopAb.y) - Math.min(farHip.y,nearHip.y)) / -3 ;
+		if (this.bio('belly') < 1) {
+			for (var i=0;i<3;i++) {
+				var abLine = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+				belly.appendChild(abLine);
+				abLine.setAttribute('stroke',areolaeTone);
+				abLine.setAttribute('stroke-width',3);
+				abLine.setAttribute('fill','none');
+				abLine.setAttribute('opacity',1-this.bio('belly'));
+				abLine.setAttribute('points',(nearTopAb.x) + ',' + (nearTopAb.y + i*step) + ' ' + bellyOffset + ',' + ((nearTopAb.y + i*step+farTopAb.y + i*step)/2 + step) + ' ' + (farTopAb.x) + ',' + (farTopAb.y + i*step));
+			};
+		};
 		
 		var scrotum = document.createElementNS('http://www.w3.org/2000/svg','g');
 		
@@ -1343,6 +1394,9 @@ function GamenBody() {
 					
 		// Order the Stack
 		
+		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
+		var bigBelly = farBellyBottom.y > farHip.y + hipsWidth || nearBellyBottom.y > nearHip.y + hipsWidth;
+		
 		var bodyParts = [hair,shoulders];
 		
 		if (lowerBodyAngle) {
@@ -1352,16 +1406,15 @@ function GamenBody() {
 		};
 		
 		if (upperBodyAngle) {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
 		} else {
-			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm]);
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
 		};
 		
 		bodyParts = bodyParts.concat([torso,scrotum,phallus,belly]);
 		
 		bodyParts = bodyParts.concat([neck,headGroup]);
 
-		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
 		if (!lapSizedBreasts && upperBodyAngle) {
 			bodyParts = bodyParts.concat([farBreast,nearBreast]);
 		} else if (!lapSizedBreasts) {
@@ -1379,13 +1432,20 @@ function GamenBody() {
 		} else if (lapSizedBreasts) {
 			bodyParts = bodyParts.concat([nearBreast,farBreast]);
 		};
-
 		
 		if (upperBodyAngle) {
-			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,farLowerArm,nearLowerArm]);
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
 		} else {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,nearLowerArm]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
 		};
+		
+		if (bigBelly  && upperBodyAngle) {
+			bodyParts = bodyParts.concat([belly,farBreast,nearBreast]);
+		} else if (bigBelly) {
+			bodyParts = bodyParts.concat([belly,nearBreast,farBreast]);
+		};
+		
+// 		bodyParts.push(belly);
 
 		// Special Render Order Goes Here (for hands behind back or similar exceptions)
 
