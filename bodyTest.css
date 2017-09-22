@@ -9,7 +9,7 @@
 	border: 1px solid red;
 }
 
-#controlsDiv {
+.controlsDiv {
 	height: 100%;
 	float: left;
 	overflow-y: auto;
