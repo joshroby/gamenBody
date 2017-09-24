@@ -11,6 +11,12 @@ var model = {
 		var svg = model.body.draw(500,750);
 		svgDiv.appendChild(svg);
 		
+		var toggleShotBtn = document.createElement('button');
+		toggleShotBtn.id = 'toggleShotBtn';
+		toggleShotBtn.innerHTML = 'Head Shot';
+		toggleShotBtn.setAttribute('onclick','handlers.toggleShot()');
+		svgDiv.appendChild(toggleShotBtn);
+		
 		var ticklist = document.createElement('datalist');
 		ticklist.id = 'ticklist';
 		for (var i of [-5,0,5]) {
@@ -59,24 +65,47 @@ var model = {
 				
 		return [svgDiv, ticklist, poseDiv, bioDiv];
 	},
+	
+	options: {
+		shot: 'fullBody',
+	},
 
 };
 
 var handlers = {
-
+	
+	newGame: function() {
+		model.body = new GamenBody();
+		handlers.draw();
+	},
+	
 	draw: function() {
-		var svg = model.body.draw(500,750);
+		var svg = model.body.draw(500,750,model.options.shot);
+		var toggleShotBtn = document.getElementById('toggleShotBtn');
 		document.getElementById('svgDiv').innerHTML = '';
 		document.getElementById('svgDiv').appendChild(svg);
+		document.getElementById('svgDiv').appendChild(toggleShotBtn);
+	},
+	
+	toggleShot: function() {
+		var toggleShotBtn = document.getElementById('toggleShotBtn');
+		if (model.options.shot == 'fullBody') {
+			model.options.shot = 'head'
+			toggleShotBtn.innerHTML = "Full Body Shot";
+		} else {
+			model.options.shot = 'fullBody'
+			toggleShotBtn.innerHTML = "Head Shot";
+		};
+		handlers.draw();
 	},
 	
 	updatePose: function(poseKey) {
-		model.body.pose[poseKey] = document.getElementById(poseKey + "Slider").value;
+		model.body.pose[poseKey] = parseInt(document.getElementById(poseKey + "Slider").value);
 		handlers.draw();
 	},
 	
 	updateBio: function(bioKey) {
-		model.body.biometrics[bioKey] = document.getElementById(bioKey + "Slider").value;
+		model.body.biometrics[bioKey] = parseInt(document.getElementById(bioKey + "Slider").value);
 		handlers.draw();
 	},
 
@@ -153,7 +182,7 @@ function GamenBody() {
 		},
 	
 		headWidth: {
-			root: 1.05,
+			root: 1.02,
 			coefficient: 170,
 			curve: 'bell',
 		},
@@ -251,11 +280,17 @@ function GamenBody() {
 	};
 	
 	this.pose = {};
-	for (i of ["farFootPoint", "farForearmLift", "farKneeBend", "farThighLift", "farUpperArmLift", "fingersSplay", "fingersCurl", "headNod", "headSlide", "headTip", "hipsCant", "nearFootPoint", "nearForearmLift", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "shouldersTip"]) {
+	for (i of [ "eyePositionX", "eyePositionY", "farEyeInnerLid", "farEyeOuterLid", "farEyeLowerLid", "farFootPoint", "farForearmLift", "farKneeBend", "farThighLift", "farUpperArmLift", "fingersSplay", "fingersCurl", "headNod", "headSlide", "headTip", "hipsCant", "nearEyeInnerLid", "nearEyeOuterLid", "nearEyeLowerLid", "nearFootPoint", "nearForearmLift", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "shouldersTip"]) {
 		this.pose[i] = Math.random() * Math.random() * Math.random() * Math.PI;
 		if (Math.random() > 0.5) {this.pose[i] *= -1;};
 		if (i == 'shouldersTip' || i == 'hipsCant' || i == 'headTip') {this.pose[i] /= 4;};
+		if (i == 'nearEyeInnerLid' || i == 'nearEyeOuterLid' || i == 'nearEyeLowerLid' || i == 'farEyeInnerLid' || i == 'farEyeOuterLid' || i == 'farEyeLowerLid' ) {this.pose[i] = Math.max(Math.min(this.pose[i]*4,Math.PI),Math.PI*-1);};
 	};
+	this.pose.nearEyeInnerLid = Math.max(this.pose.nearEyeInnerLid,this.pose.nearEyeOuterLid,this.pose.nearEyeLowerLid);
+	this.pose.farEyeInnerLid = Math.max(this.pose.farEyeInnerLid,this.pose.farEyeOuterLid,this.pose.farEyeLowerLid);
+	this.pose.nearEyeInnerLid = this.pose.farEyeInnerLid;
+	this.pose.nearEyeOuterLid = this.pose.farEyeOuterLid;
+	this.pose.nearEyeLowerLid = this.pose.farEyeLowerLid;
 
 	this.skinTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
 	this.areolaeTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
@@ -271,17 +306,37 @@ function GamenBody() {
 	};
 	
 	
-	this.draw = function(width,height,pose) {
+	this.draw = function(width,height,shot) {
 		if (height == undefined) {height = 100;};
 		if (width == undefined) {width = 100;};
-		if (pose == undefined) {pose = this.pose};
+		if (shot == undefined) {shot = 'fullBody';};
 		
 		var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
 		
+		var svgNodes = this.svg(height);
+		svg.appendChild(svgNodes);
+		
+		// default viewport
 		var minX = width/-2;
 		var minY = height * -0.8
 		var viewBoxString = minX + ' ' + minY + ' ' + width + ' ' + height;
 		svg.setAttribute('viewBox',viewBoxString);
+		
+		if (shot == 'head') {
+			headShot = svg.getElementById('headShot');
+			viewBoxString = headShot.getAttribute('x') + ' ' + headShot.getAttribute('y') + ' ' + headShot.getAttribute('width') + ' ' + headShot.getAttribute('height');
+			svg.setAttribute('viewBox',viewBoxString);
+		};
+		
+		return svg;
+		
+	};
+	
+	this.svg = function (height) {
+	
+		var svg = document.createElementNS('http://www.w3.org/2000/svg','g');
+	
+		pose = this.pose;
 		
 		var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
 		svg.appendChild(defs);
@@ -1323,39 +1378,6 @@ function GamenBody() {
 		
 		var phallus = document.createElementNS('http://www.w3.org/2000/svg','g');
 		
-		var headGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
-		headGroup.id = 'headGroup';
-		headGroup.setAttribute('fill',skinTone);
-		headGroup.setAttribute('stroke','inherit');
-		var head = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-		headGroup.appendChild(head);
-		head.setAttribute('cx',headCenter.x);
-		head.setAttribute('cy',headCenter.y);
-		head.setAttribute('rx',headWidth/2);
-		head.setAttribute('ry',headHeight/2);
-		var headTilt = pose.headTip * 180/Math.PI;
-		var headSlide = pose.headSlide * 20/Math.PI;
-		headGroup.setAttribute('transform','translate('+headSlide+',0) rotate('+headTilt+','+headCenter.x+','+headCenter.y+')');		
-		var hair = document.createElementNS('http://www.w3.org/2000/svg','g');
-		
-		var neck = document.createElementNS('http://www.w3.org/2000/svg','g');
-		neck.id = 'neck';
-		neck.setAttribute('fill',skinTone);
-		neck.setAttribute('stroke','inherit');
-		var neckPath = document.createElementNS('http://www.w3.org/2000/svg','polyline');
-		neck.appendChild(neckPath);
-		var neckWidth = this.bio('neckWidth')/0.7;
-		var neckPoints = [
-			{x:neckWidth*neckBase.x + nearShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + nearShoulder.y*(1-neckWidth) - neckHeight/2},
-			{x:headCenter.x+headSlide,y:headCenter.y},
-			{x:neckWidth*neckBase.x + farShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + farShoulder.y*(1-neckWidth) - neckHeight/2},
-		];
-		var neckPointsString = '';
-		for (var i in neckPoints) {
-			neckPointsString += neckPoints[i].x + ',' + neckPoints[i].y + ' ';
-		};
-		neckPath.setAttribute('points',neckPointsString);
-
 		var farFoot = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farFoot.id = 'farFoot';
 		farFoot.setAttribute('fill',skinTone);
@@ -1448,6 +1470,211 @@ function GamenBody() {
 		var tilt = pose.nearFootPoint * -180/Math.PI / 6;
 		nearFoot.setAttribute('transform','rotate('+tilt+' '+nearAnkle.x+' '+nearAnkle.y+')');
 					
+		var headGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		headGroup.id = 'headGroup';
+		headGroup.setAttribute('fill',skinTone);
+		headGroup.setAttribute('stroke','inherit');
+		var facing;
+		if (upperBodyAngle) {
+			facing = 12;
+		} else {
+			facing = -12;
+		};
+		var eyeSize = this.bio('eyeSize') * 8;
+		var nodOffset = 10*pose.headNod/Math.PI
+		var head = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+		headGroup.appendChild(head);
+		head.setAttribute('cx',headCenter.x);
+		head.setAttribute('cy',headCenter.y);
+		head.setAttribute('rx',headWidth/2);
+		head.setAttribute('ry',headHeight/2);
+		var temples = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+		headGroup.appendChild(temples);
+		temples.setAttribute('cx',headCenter.x);
+		temples.setAttribute('cy',headCenter.y-headHeight/2+headWidth/2);
+		temples.setAttribute('rx',headWidth/2);
+		temples.setAttribute('ry',headWidth/2);
+		var nearEyeCenter = {
+			x: headCenter.x+facing-headWidth/5,
+			y: headCenter.y+nodOffset,
+		};
+		var farEyeCenter = {
+			x: headCenter.x+facing+headWidth/5,
+			y: headCenter.y+nodOffset,
+		};
+		var nearEyeGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		headGroup.appendChild(nearEyeGroup);
+		var nearEyeBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearEyeGroup.appendChild(nearEyeBack);
+		nearEyeBack.setAttribute('cx',nearEyeCenter.x);
+		nearEyeBack.setAttribute('cy',nearEyeCenter.y);
+		nearEyeBack.setAttribute('r',eyeSize);
+		var nearEyeBall = document.createElementNS('http://www.w3.org/2000/svg','g');
+		nearEyeGroup.appendChild(nearEyeBall);
+		var nearEye = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearEyeBall.appendChild(nearEye);
+		nearEye.setAttribute('stroke','red');
+		nearEye.setAttribute('stroke-width',2);
+		nearEye.setAttribute('fill','ghostwhite');
+		nearEye.setAttribute('cx',nearEyeCenter.x);
+		nearEye.setAttribute('cy',nearEyeCenter.y);
+		nearEye.setAttribute('r',eyeSize);
+		var nearEyePupil = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		var nearEyeIris = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		var nearEyeHighlight = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearEyeBall.appendChild(nearEyeIris);
+		nearEyeBall.appendChild(nearEyePupil);
+		nearEyeBall.appendChild(nearEyeHighlight);
+		nearEyePupil.setAttribute('cx',nearEyeCenter.x+pose.eyePositionX/Math.PI*eyeSize);
+		nearEyeIris.setAttribute('cx',nearEyeCenter.x+pose.eyePositionX/Math.PI*eyeSize);
+		nearEyeHighlight.setAttribute('cx',nearEyeCenter.x+eyeSize/4+pose.eyePositionX/Math.PI*eyeSize);
+		nearEyePupil.setAttribute('cy',nearEyeCenter.y+pose.eyePositionY/Math.PI*eyeSize);
+		nearEyeIris.setAttribute('cy',nearEyeCenter.y+pose.eyePositionY/Math.PI*eyeSize);
+		nearEyeHighlight.setAttribute('cy',nearEyeCenter.y-eyeSize/4+pose.eyePositionY/Math.PI*eyeSize);
+		nearEyePupil.setAttribute('r',eyeSize/4);
+		nearEyeIris.setAttribute('r',eyeSize/2);
+		nearEyeHighlight.setAttribute('r',eyeSize/4);
+		nearEyePupil.setAttribute('fill','black');
+		nearEyeIris.setAttribute('fill','green');
+		nearEyeHighlight.setAttribute('fill','white');
+		var nearEyeLidsClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+		nearEyeLidsClipPath.id = 'nearEyeLidsClipPath';
+		defs.appendChild(nearEyeLidsClipPath);
+		var nearEyeLids = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearEyeLidsClipPath.appendChild(nearEyeLids);
+		var nearEyeLidsStroke = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearEyeGroup.appendChild(nearEyeLidsStroke);
+		nearEyeLidsStroke.setAttribute('stroke','black');
+		nearEyeLidsStroke.setAttribute('stroke-width',1);
+		nearEyeLidsStroke.setAttribute('fill','none');
+		d = 'M '+(nearEyeCenter.x+eyeSize)+','+nearEyeCenter.y+' ';
+		d += 'C '+(nearEyeCenter.x+eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeInnerLid*10/Math.PI) +' '+(nearEyeCenter.x-eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeOuterLid*10/Math.PI) +' '+(nearEyeCenter.x-eyeSize)+','+nearEyeCenter.y+' ';
+		d += 'C '+(nearEyeCenter.x-eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+nearEyeCenter.y+' ';
+		nearEyeLids.setAttribute('d',d);
+		nearEyeLidsStroke.setAttribute('d',d);
+		nearEyeBall.setAttribute('clip-path','url(#nearEyeLidsClipPath)');
+		var farEyeGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+		headGroup.appendChild(farEyeGroup);
+		var farEyeBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farEyeGroup.appendChild(farEyeBack);
+		farEyeBack.setAttribute('cx',farEyeCenter.x);
+		farEyeBack.setAttribute('cy',farEyeCenter.y);
+		farEyeBack.setAttribute('r',eyeSize);
+		var farEyeBall = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farEyeGroup.appendChild(farEyeBall);
+		var farEye = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farEyeBall.appendChild(farEye);
+		farEye.setAttribute('stroke','red');
+		farEye.setAttribute('stroke-width',2);
+		farEye.setAttribute('fill','white');
+		farEye.setAttribute('cx',headCenter.x+facing+headWidth/5);
+		farEye.setAttribute('cy',headCenter.y+nodOffset);
+		farEye.setAttribute('r',eyeSize);
+		var farEyePupil = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		var farEyeIris = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		var farEyeHighlight = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farEyeBall.appendChild(farEyeIris);
+		farEyeBall.appendChild(farEyePupil);
+		farEyeBall.appendChild(farEyeHighlight);
+		farEyePupil.setAttribute('cx',farEyeCenter.x+pose.eyePositionX/Math.PI*eyeSize);
+		farEyeIris.setAttribute('cx',farEyeCenter.x+pose.eyePositionX/Math.PI*eyeSize);
+		farEyeHighlight.setAttribute('cx',farEyeCenter.x+eyeSize/4+pose.eyePositionX/Math.PI*eyeSize);
+		farEyePupil.setAttribute('cy',farEyeCenter.y+pose.eyePositionY/Math.PI*eyeSize);
+		farEyeIris.setAttribute('cy',farEyeCenter.y+pose.eyePositionY/Math.PI*eyeSize);
+		farEyeHighlight.setAttribute('cy',farEyeCenter.y-eyeSize/4+pose.eyePositionY/Math.PI*eyeSize);
+		farEyePupil.setAttribute('r',eyeSize/4);
+		farEyeIris.setAttribute('r',eyeSize/2);
+		farEyeHighlight.setAttribute('r',eyeSize/4);
+		farEyePupil.setAttribute('fill','black');
+		farEyeIris.setAttribute('fill','green');
+		farEyeHighlight.setAttribute('fill','white');
+		var farEyeLidsClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+		farEyeLidsClipPath.id = 'farEyeLidsClipPath';
+		defs.appendChild(farEyeLidsClipPath);
+		var farEyeLids = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farEyeLidsClipPath.appendChild(farEyeLids);
+		var farEyeLidsStroke = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farEyeGroup.appendChild(farEyeLidsStroke);
+		farEyeLidsStroke.setAttribute('stroke','black');
+		farEyeLidsStroke.setAttribute('stroke-width',1);
+		farEyeLidsStroke.setAttribute('fill','none');
+		d = 'M '+(farEyeCenter.x-eyeSize)+','+farEyeCenter.y+' ';
+		d += 'C '+(farEyeCenter.x-eyeSize)+','+ (farEyeCenter.y+pose.farEyeInnerLid*10/Math.PI) +' '+(farEyeCenter.x+eyeSize)+','+ (farEyeCenter.y+pose.farEyeOuterLid*10/Math.PI) +' '+(farEyeCenter.x+eyeSize)+','+farEyeCenter.y+' ';
+		d += 'C '+(farEyeCenter.x+eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+farEyeCenter.y+' ';
+		farEyeLids.setAttribute('d',d);
+		farEyeLidsStroke.setAttribute('d',d);
+		farEyeBall.setAttribute('clip-path','url(#farEyeLidsClipPath)');
+		var faceGuides = document.createElementNS('http://www.w3.org/2000/svg','g');
+		headGroup.appendChild(faceGuides);
+		faceGuides.setAttribute('stroke','black');
+		faceGuides.setAttribute('stroke-width',0.5);
+		faceGuides.setAttribute('fill','none');
+		var verticalGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		faceGuides.appendChild(verticalGuide);
+		facing = headWidth/3;
+		if (!upperBodyAngle) {
+			facing *= -1;
+		};
+		d = 'M '+headCenter.x+','+(headCenter.y-headHeight/2)+' ';
+		d += 'C '+(headCenter.x+facing)+','+(headCenter.y-headHeight/2)+' '+(headCenter.x+facing)+','+(headCenter.y+headHeight/2)+' '+' '+(headCenter.x)+','+(headCenter.y+headHeight/2);
+		verticalGuide.setAttribute('d',d);
+		var middleGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		faceGuides.appendChild(middleGuide);
+		var nearFacing, farFacing;
+		var facing = 10*pose.headNod/Math.PI;
+		if (upperBodyAngle) {
+			nearFacing = facing;
+			farFacing  = 2*facing;
+		} else {
+			nearFacing = 2*facing;
+			farFacing  = facing;
+		};
+		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y)+' ';
+		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y);
+		middleGuide.setAttribute('d',d);
+		var noseGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		faceGuides.appendChild(noseGuide);
+		var facing = 10*pose.headNod/Math.PI;
+		if (!upperBodyAngle) {
+			facing *= -1;
+		};
+		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4)+' ';
+		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4);
+		noseGuide.setAttribute('d',d);
+		var mouthGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		faceGuides.appendChild(mouthGuide);
+		var facing = 10*pose.headNod/Math.PI;
+		if (!upperBodyAngle) {
+			facing *= -1;
+		};
+		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3)+' ';
+		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3);
+		mouthGuide.setAttribute('d',d);
+		
+		var headTilt = pose.headTip * 180/Math.PI;
+		var headSlide = pose.headSlide * 20/Math.PI;
+		headGroup.setAttribute('transform','translate('+headSlide+',0) rotate('+headTilt+','+headCenter.x+','+headCenter.y+')');		
+		
+		var hair = document.createElementNS('http://www.w3.org/2000/svg','g');
+		
+		var neck = document.createElementNS('http://www.w3.org/2000/svg','g');
+		neck.id = 'neck';
+		neck.setAttribute('fill',skinTone);
+		neck.setAttribute('stroke','inherit');
+		var neckPath = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+		neck.appendChild(neckPath);
+		var neckWidth = this.bio('neckWidth')/0.7;
+		var neckPoints = [
+			{x:neckWidth*neckBase.x + nearShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + nearShoulder.y*(1-neckWidth) - neckHeight/2},
+			{x:headCenter.x+headSlide,y:headCenter.y},
+			{x:neckWidth*neckBase.x + farShoulder.x*(1-neckWidth),y:neckWidth*neckBase.y + farShoulder.y*(1-neckWidth) - neckHeight/2},
+		];
+		var neckPointsString = '';
+		for (var i in neckPoints) {
+			neckPointsString += neckPoints[i].x + ',' + neckPoints[i].y + ' ';
+		};
+		neckPath.setAttribute('points',neckPointsString);
+
 		// Order the Stack
 		
 		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
@@ -1515,6 +1742,19 @@ function GamenBody() {
 			};
 			svg.appendChild(i);
 		};
+		
+		var shots = document.createElementNS('http://www.w3.org/2000/svg','g');
+		svg.appendChild(shots);
+		var headShot = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		headShot.id = 'headShot';
+		var headShotSize = totalHeight * 0.3;
+		headShot.setAttribute('x',headCenter.x - headShotSize/2);
+		headShot.setAttribute('y',headCenter.y - headShotSize/2);
+		headShot.setAttribute('width',headShotSize);
+		headShot.setAttribute('height',headShotSize);
+		headShot.setAttribute('fill','none');
+		headShot.setAttribute('stroke','none');
+		shots.appendChild(headShot);
 										
 		return svg;
 	};
