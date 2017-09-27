@@ -1,7 +1,7 @@
 var model = {
 
-	gameTitle: 'Gamen Body Test',
-	gameSavePrefix: 'bodyTest',
+	gameTitle: 'Gamen Body Poser',
+	gameSavePrefix: 'bodyPoser',
 
 	gameDivContents: function() {
 		var svgDiv = document.createElement('div');
@@ -132,7 +132,7 @@ var handlers = {
 	},
 	
 	updateBio: function(bioKey) {
-		model.body.biometrics[bioKey] = parseInt(document.getElementById(bioKey + "Slider").value);
+		model.body.biometrics[bioKey] = document.getElementById(bioKey + "Slider").value;
 		handlers.draw();
 	},
 	
@@ -181,18 +181,23 @@ function GamenBody() {
 			root: 1.09,
 			curve: 'bell',
 		},
-	
-		browHeight: {
-			root: 1.07,
-			curve: 'bell',
-		},
-	
+		
 		browSize: {
+			root: 1.1,
+			curve: 'bell',
+		},
+	
+		templeHeight: {
 			root: 1.07,
 			curve: 'bell',
 		},
 	
-		browWidth: {
+		templeSize: {
+			root: 1.07,
+			curve: 'bell',
+		},
+	
+		templeWidth: {
 			root: 1.07,
 			curve: 'bell',
 		},
@@ -269,6 +274,11 @@ function GamenBody() {
 	
 		legHeight: {
 			root: 1.05,
+			curve: 'bell',
+		},
+		
+		lipSize: {
+			root: 1.08,
 			curve: 'bell',
 		},
 	
@@ -351,12 +361,19 @@ function GamenBody() {
 	};
 	
 	this.coloring = {};
-	for (i of ['skinBlack','skinBrown','skinPink','areolaePink','areolaeDark']) {
+	for (i of ['skinBlack','skinBrown','skinPink','areolaePink','areolaeDark','lipPink','lipDark','eyeGreen','eyeBlue']) {
 		this.coloring[i] = Math.random();
 	};
+// 	Debugging Purposes - remove for use
+	this.coloring.skinBlack = Math.min(this.coloring.skinBlack,0.7);
+	var red = Math.random() * 255 << 0;
+	var green = Math.random() * 255  << 0;
+	var blue = Math.random() * 255 << 0;
+	this.coloring.hairColor = "#" + ("0" + red.toString(16)).substr(-2) + ("0" + green.toString(16)).substr(-2) + ("0" + blue.toString(16)).substr(-2);
+
 	
 	this.pose = {};
-	for (i of [ "eyePositionX", "eyePositionY", "farEyeInnerLid", "farEyeOuterLid", "farEyeLowerLid", "farFootPoint", "farForearmLift", "farKneeBend", "farThighLift", "farUpperArmLift", "fingersSplay", "fingersCurl", "headNod", "headSlide", "headTip", "hipsCant", "mouthOpen", "mouthNearCorner", "mouthFarCorner", "nearEyeInnerLid", "nearEyeOuterLid", "nearEyeLowerLid", "nearFootPoint", "nearForearmLift", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "shouldersTip"]) {
+	for (i of [ "eyePositionX", "eyePositionY", "farEyeInnerLid", "farEyeOuterLid", "farEyeLowerLid", "farEyebrowArch", "farFootPoint", "farForearmLift", "farKneeBend", "farThighLift", "farUpperArmLift", "fingersSplay", "fingersCurl", "headNod", "headSlide", "headTip", "hipsCant", "mouthOpen", "mouthPurse", "mouthSmile", "mouthGrimace", "mouthSmirk", "nearEyeInnerLid", "nearEyeOuterLid", "nearEyeLowerLid", "nearEyebrowArch", "nearFootPoint", "nearForearmLift", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "shouldersTip"]) {
 		this.pose[i] = Math.random() * Math.random() * Math.random() * Math.PI;
 		if (Math.random() > 0.5) {this.pose[i] *= -1;};
 		if (i == 'shouldersTip' || i == 'hipsCant' || i == 'headTip') {this.pose[i] /= 4;};
@@ -364,12 +381,14 @@ function GamenBody() {
 	};
 	this.pose.nearEyeInnerLid = Math.max(this.pose.nearEyeInnerLid,this.pose.nearEyeOuterLid,this.pose.nearEyeLowerLid);
 	this.pose.farEyeInnerLid = Math.max(this.pose.farEyeInnerLid,this.pose.farEyeOuterLid,this.pose.farEyeLowerLid);
+	this.pose.nearEyeLowerLid = Math.min(this.pose.farEyeInnerLid,this.pose.farEyeOuterLid,this.pose.farEyeLowerLid);
+	this.pose.farEyeLowerLid = Math.min(this.pose.farEyeInnerLid,this.pose.farEyeOuterLid,this.pose.farEyeLowerLid);
 	this.pose.nearEyeInnerLid = this.pose.farEyeInnerLid;
 	this.pose.nearEyeOuterLid = this.pose.farEyeOuterLid;
 	this.pose.nearEyeLowerLid = this.pose.farEyeLowerLid;
-
-// 	this.skinTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
-// 	this.areolaeTone = ['#FAE7D0','#DFC183','#AA724B','#C8ACA3','#E8CDA8','#7B4B2A'][Math.random() * 6 << 0];
+	this.pose.mouthOpen = Math.random() * Math.PI*2 - Math.PI;
+	this.pose.nearEyebrowArch = Math.random() * Math.PI*2 - Math.PI;
+	this.pose.farEyebrowArch = Math.random() * Math.PI*2 - Math.PI;
 	
 	this.bio = function(key) {
 		var result = this.biometrics[key];
@@ -439,11 +458,30 @@ function GamenBody() {
 			var lipRed = skinRed * lipDark;
 			var lipGreen = skinGreen * lipPink * lipDark;
 			var lipBlue = skinBlue * lipPink * lipDark;
-			var lipTone = "#" + ("0" + Math.round(lipRed).toString(16)).substr(-2) + ("0" + Math.round(lipGreen).toString(16)).substr(-2) + ("0" + Math.round(lipBlue).toString(16)).substr(-2);
+			var lipColor = "#" + ("0" + Math.round(lipRed).toString(16)).substr(-2) + ("0" + Math.round(lipGreen).toString(16)).substr(-2) + ("0" + Math.round(lipBlue).toString(16)).substr(-2);
+
+			var mouthRed = skinRed/3;
+			var mouthBlue = skinBlue/3;
+			var mouthGreen = skinGreen/3;
+			var mouthColor = "#" + ("0" + Math.round(mouthRed).toString(16)).substr(-2) + ("0" + Math.round(mouthGreen).toString(16)).substr(-2) + ("0" + Math.round(mouthBlue).toString(16)).substr(-2);	
+
+			var eyeRed = 255, eyeGreen = 255, eyeBlue = 255;
+			var eyePigmentGreen = 1-this.coloring.eyeGreen;
+			var eyePigmentBlue = 1-this.coloring.eyeBlue;
+			eyeRed *= eyePigmentGreen * eyePigmentBlue;
+			eyeBlue *= eyePigmentGreen;
+			eyeGreen *= eyePigmentBlue;
+			var eyeColor = "#" + ("0" + Math.round(eyeRed).toString(16)).substr(-2) + ("0" + Math.round(eyeGreen).toString(16)).substr(-2) + ("0" + Math.round(eyeBlue).toString(16)).substr(-2);
+
+			var hairColor = this.coloring.hairColor;
+
 		} else {
 			var skinTone = this.coloring.custom.skinTone;
 			var areolaeTone = this.coloring.custom.areolaeTone;
-			var lipTone = this.coloring.custom.lipTone;
+			var lipColor = this.coloring.custom.lipTone;
+			var mouthColor = this.coloring.custom.mouthColor;
+			var eyeColor = this.coloring.custom.eyeColor;
+			var hairColor = this.coloring.custom.hairColor;
 		};
 		
 	
@@ -492,6 +530,8 @@ function GamenBody() {
 		var headCenter = {x:0,y:shouldersHeight - neckHeight - headHeight/2};
 		var breastSize = this.bio('breastSize') * 20;
 		var haunchWidth = this.bio('hipsWidth') * 30;
+		var lipSize = this.bio('lipSize') * 3;
+		var browSize = this.bio('browSize')*3
 				
 		// Orientation
 		var upperBodyAngle ;
@@ -665,7 +705,8 @@ function GamenBody() {
 		};
 		var headTilt = pose.headTip * 180/Math.PI;
 		var headSlide = pose.headSlide * 20/Math.PI;
-		var nodOffset = 10*pose.headNod/Math.PI
+// 		var nodOffset = 10*pose.headNod/Math.PI
+		var nodOffset = 0;
 		var eyeSize = this.bio('eyeSize') * 8;
 		var eyeDistance = this.bio('eyeDistance') * headWidth/5;
 		var nearEyeCenter = {
@@ -706,19 +747,11 @@ function GamenBody() {
 		};
 		var mouthHeight = 5*(pose.mouthOpen + Math.PI)/Math.PI;
 		var topOfMouth = {
-			x: headCenter.x + facing,
+			x: headCenter.x + facing*1.2,
 			y: headCenter.y + headHeight/3+nodOffset,
 		};
-		var nearMouthCorner = {
-			x: topOfMouth.x - headWidth/5,
-			y: topOfMouth.y + pose.mouthNearCorner*2,
-		};
-		var farMouthCorner = {
-			x: topOfMouth.x + headWidth/5,
-			y: topOfMouth.y + pose.mouthFarCorner*2,
-		};
 		var chin = {
-			x: topOfMouth.x + facing/2,
+			x: topOfMouth.x,
 			y: topOfMouth.y + mouthHeight + headHeight/8,
 		};
 		var nearEarCenter = {
@@ -737,15 +770,18 @@ function GamenBody() {
 			x: headCenter.x+headWidth*0.3,
 			y: headCenter.y+headHeight*0.2,
 		};
-		var browSize = this.bio('browSize')*5;
-		var nearBrow = {
-			x: nearEyeCenter.x-eyeSize - this.bio('browWidth')*2,
-			y: nearEyeCenter.y - this.bio('browHeight')*5,
+		var templeSize = this.bio('templeSize')*5;
+		var nearTemple = {
+			x: nearEyeCenter.x-eyeSize - this.bio('templeWidth')*2,
+			y: nearEyeCenter.y - this.bio('templeHeight')*5,
 		};
-		var farBrow = {
-			x: farEyeCenter.x + eyeSize + this.bio('browWidth')*2,
-			y: farEyeCenter.y - this.bio('browHeight')*5,
+		var farTemple = {
+			x: farEyeCenter.x + eyeSize + this.bio('templeWidth')*2,
+			y: farEyeCenter.y - this.bio('templeHeight')*5,
 		};
+		var mouthPurse = headWidth*0.04 + headWidth*0.04*(pose.mouthPurse + Math.PI)/Math.PI;
+		var mouthSmile = (1+pose.mouthSmile/Math.PI)/4;
+		var mouthGrimace = (pose.mouthGrimace/Math.PI)*mouthHeight/2;
 		
 //		Wireframe (Old)
 // 		var wireframe = document.createElementNS('http://www.w3.org/2000/svg','g');
@@ -809,6 +845,15 @@ function GamenBody() {
 // 		head.setAttribute('stroke','black');
 		
 		// Shapes
+		
+		var hairBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		hairBack.id = 'hairBack';
+		hairBack.setAttribute('fill',hairColor);
+		hairBack.setAttribute('cx',headCenter.x);
+		hairBack.setAttribute('cy',headCenter.y - headHeight/2 + headWidth/2);
+		hairBack.setAttribute('r',headWidth * 0.6);
+		hairBack.setAttribute('transform','translate('+headSlide+',0) rotate('+headTilt+','+headCenter.x+','+headCenter.y+')');
+		
 		var farCalf = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farCalf.id = 'farCalf';
 		farCalf.setAttribute('fill',skinTone);
@@ -1353,7 +1398,7 @@ function GamenBody() {
 		nipple.setAttribute('fill',areolaeTone);
 		if (this.bio('nippleLength') >= 1) {
 			nipple.setAttribute('stroke','black');
-			nipple.setAttribute('stroke-width',3);
+			nipple.setAttribute('stroke-width',2);
 			nipple.setAttribute('stroke-linecap','round');
 		};
 		var d = 'M ' + farNippleTop.x + ',' + farNippleTop.y + ' ';
@@ -1447,7 +1492,7 @@ function GamenBody() {
 		nipple.setAttribute('fill',areolaeTone);
 		if (this.bio('nippleLength') >= 1) {
 			nipple.setAttribute('stroke','black');
-			nipple.setAttribute('stroke-width',3);
+			nipple.setAttribute('stroke-width',2);
 			nipple.setAttribute('stroke-linecap','round');
 		};
 		var d = 'M ' + nearNippleTop.x + ',' + nearNippleTop.y + ' ';
@@ -1679,12 +1724,6 @@ function GamenBody() {
 		skull.setAttribute('cy',headCenter.y-headHeight/2+headWidth/2);
 		skull.setAttribute('rx',headWidth/2);
 		skull.setAttribute('ry',headWidth/2);
-// 		var headEllipse = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-// 		headGroup.appendChild(headEllipse);
-// 		headEllipse.setAttribute('cx',headCenter.x);
-// 		headEllipse.setAttribute('cy',headCenter.y);
-// 		headEllipse.setAttribute('rx',headWidth/2);
-// 		headEllipse.setAttribute('ry',headHeight/2);
 		var face = document.createElementNS('http://www.w3.org/2000/svg','path');
 		headGroup.appendChild(face);
 		if (facing > 0) {
@@ -1696,8 +1735,8 @@ function GamenBody() {
 			jawY = nearJawbone.y;
 			earX = nearEarCenter.x;
 			earY = nearEarCenter.y;
-			browX = farBrow.x;
-			browY = farBrow.y;
+			templeX = farTemple.x;
+			templeY = farTemple.y;
 		} else {
 			startX = nearEyeCenter.x - eyeSize;
 			startY = nearEyeCenter.y
@@ -1707,8 +1746,8 @@ function GamenBody() {
 			jawY = farJawbone.y;
 			earX = farEarCenter.x;
 			earY = farEarCenter.y;
-			browX = nearBrow.x;
-			browY = nearBrow.y;
+			templeX = nearTemple.x;
+			templeY = nearTemple.y;
 		};
 		x = startX;
 		y = startY;
@@ -1744,19 +1783,20 @@ function GamenBody() {
 		d += 'L '+headCenter.x+','+(headCenter.y-headHeight*0.48)+' ';
 		c1x = headCenter.x + headWidth*facing*0.05;
 		c1y = headCenter.y - headHeight*0.48;
-		x = browX;
-		y = browY;
+		x = templeX;
+		y = templeY;
 		c2x = x;
-		c2y = y-browSize;
+		c2y = y-templeSize;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		c1x = x;
-		c1y = y+browSize;
+		c1y = y+templeSize;
 		x = startX;
 		y = startY;
 		c2x = x;
 		c2y = y;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		face.setAttribute('d',d);
+		
 		var nearEyeGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
 		headGroup.appendChild(nearEyeGroup);
 		var nearEyeBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -1790,7 +1830,7 @@ function GamenBody() {
 		nearEyeIris.setAttribute('r',eyeSize/2);
 		nearEyeHighlight.setAttribute('r',eyeSize/4);
 		nearEyePupil.setAttribute('fill','black');
-		nearEyeIris.setAttribute('fill','green');
+		nearEyeIris.setAttribute('fill',eyeColor);
 		nearEyeHighlight.setAttribute('fill','white');
 		var nearEyeLidsClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
 		nearEyeLidsClipPath.id = 'nearEyeLidsClipPath';
@@ -1804,12 +1844,13 @@ function GamenBody() {
 		nearEyeLidsStroke.setAttribute('fill','none');
 		d = 'M '+(nearEyeCenter.x+eyeSize)+','+nearEyeCenter.y+' ';
 		d += 'C '+(nearEyeCenter.x+eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeInnerLid*10/Math.PI) +' '+(nearEyeCenter.x-eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeOuterLid*10/Math.PI) +' '+(nearEyeCenter.x-eyeSize)+','+nearEyeCenter.y+' ';
-		d += 'C '+(nearEyeCenter.x-eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+nearEyeCenter.y+' ';
+		d += 'C '+(nearEyeCenter.x-eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*-10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+ (nearEyeCenter.y+pose.nearEyeLowerLid*-10/Math.PI) +' '+(nearEyeCenter.x+eyeSize)+','+nearEyeCenter.y+' ';
 		nearEyeLids.setAttribute('d',d);
 		nearEyeLidsStroke.setAttribute('d',d);
 		nearEyeLids.setAttribute('transform','rotate('+(150*(this.bio('eyeTilt')-1))+' '+nearEyeCenter.x+' '+nearEyeCenter.y+')');
 		nearEyeLidsStroke.setAttribute('transform','rotate('+(150*(this.bio('eyeTilt')-1))+' '+nearEyeCenter.x+' '+nearEyeCenter.y+')');
 		nearEyeBall.setAttribute('clip-path','url(#nearEyeLidsClipPath)');
+		
 		var farEyeGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
 		headGroup.appendChild(farEyeGroup);
 		var farEyeBack = document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -1843,7 +1884,7 @@ function GamenBody() {
 		farEyeIris.setAttribute('r',eyeSize/2);
 		farEyeHighlight.setAttribute('r',eyeSize/4);
 		farEyePupil.setAttribute('fill','black');
-		farEyeIris.setAttribute('fill','green');
+		farEyeIris.setAttribute('fill',eyeColor);
 		farEyeHighlight.setAttribute('fill','white');
 		var farEyeLidsClipPath = document.createElementNS('http://www.w3.org/2000/svg','clipPath');
 		farEyeLidsClipPath.id = 'farEyeLidsClipPath';
@@ -1857,13 +1898,130 @@ function GamenBody() {
 		farEyeLidsStroke.setAttribute('fill','none');
 		d = 'M '+(farEyeCenter.x-eyeSize)+','+farEyeCenter.y+' ';
 		d += 'C '+(farEyeCenter.x-eyeSize)+','+ (farEyeCenter.y+pose.farEyeInnerLid*10/Math.PI) +' '+(farEyeCenter.x+eyeSize)+','+ (farEyeCenter.y+pose.farEyeOuterLid*10/Math.PI) +' '+(farEyeCenter.x+eyeSize)+','+farEyeCenter.y+' ';
-		d += 'C '+(farEyeCenter.x+eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+farEyeCenter.y+' ';
+		d += 'C '+(farEyeCenter.x+eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*-10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+ (farEyeCenter.y+pose.farEyeLowerLid*-10/Math.PI) +' '+(farEyeCenter.x-eyeSize)+','+farEyeCenter.y+' ';
 		farEyeLids.setAttribute('d',d);
 		farEyeLidsStroke.setAttribute('d',d);
 		farEyeLids.setAttribute('transform','rotate('+(-150*(this.bio('eyeTilt')-1))+' '+farEyeCenter.x+' '+farEyeCenter.y+')');
 		farEyeLidsStroke.setAttribute('transform','rotate('+(-150*(this.bio('eyeTilt')-1))+' '+farEyeCenter.x+' '+farEyeCenter.y+')');
 		farEyeBall.setAttribute('clip-path','url(#farEyeLidsClipPath)');
-			
+		
+		var lips = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(lips);
+		lips.setAttribute('fill',lipColor);
+		if (this.bio('lipSize') > 1) {
+			lips.setAttribute('stroke','black');
+			lips.setAttribute('stroke-width',1);
+			lips.setAttribute('stroke-linecap','round');
+		};
+		x = topOfMouth.x;
+		y = topOfMouth.y-lipSize*0.5;
+		d = 'M '+x+','+y+' ';
+		dc1x = mouthPurse/2;
+		dc1y = -1 * lipSize;
+		dx = mouthPurse*(1+mouthSmile) + lipSize*0.25;
+		dy = mouthSmile*mouthHeight*-0.5;
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = mouthPurse/2;
+		dc1y = 0;
+		dx = mouthPurse * mouthSmile * -1;
+		dy = mouthHeight*(1+mouthSmile) + lipSize;
+		dc2x = dx + Math.abs(mouthGrimace);
+		dc2y = dy - mouthGrimace;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = -1 * Math.abs(mouthGrimace);
+		dc1y = mouthGrimace + lipSize;
+		dx = mouthPurse * -2 - lipSize*0.5;
+		dy = 0;
+		dc2x = dx + Math.abs(mouthGrimace);
+		dc2y = dy + mouthGrimace + lipSize;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = -1 * Math.abs(mouthGrimace);
+		dc1y = mouthGrimace * -1;
+		dx = mouthPurse * mouthSmile * -1;
+		dy = mouthHeight * -1 * (1+mouthSmile) - lipSize;
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = mouthPurse/2;
+		dc1y = 0;
+		dx = mouthPurse*(1+mouthSmile) + lipSize*0.25;
+		dy = mouthSmile*mouthHeight*0.5;
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy - lipSize;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		lips.setAttribute('d',d);
+
+		var mouth = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(mouth);
+		mouth.setAttribute('stroke','black');
+		mouth.setAttribute('stroke-width',1);
+		mouth.setAttribute('stroke-linecap','round');
+		mouth.setAttribute('fill',mouthColor);
+		x = topOfMouth.x;
+		y = topOfMouth.y;
+		d = 'M '+x+','+y+' ';
+		dc1x = mouthPurse/2;
+		dc1y = 0;
+		dx = mouthPurse*(1+mouthSmile);
+		dy = mouthSmile*mouthHeight*-0.5;
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = mouthPurse/2;
+		dc1y = 0;
+		dx = mouthPurse * mouthSmile * -1;
+		dy = mouthHeight*(1+mouthSmile);
+		dc2x = dx + Math.abs(mouthGrimace);
+		dc2y = dy - mouthGrimace;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = -1 * Math.abs(mouthGrimace);
+		dc1y = mouthGrimace;
+		dx = mouthPurse * -2;
+		dy = 0;
+		dc2x = dx + Math.abs(mouthGrimace);
+		dc2y = dy + mouthGrimace;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = -1 * Math.abs(mouthGrimace);
+		dc1y = mouthGrimace * -1;
+		dx = mouthPurse * mouthSmile * -1;
+		dy = mouthHeight * -1 * (1+mouthSmile);
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		dc1x = mouthPurse/2;
+		dc1y = 0;
+		dx = mouthPurse*(1+mouthSmile);
+		dy = mouthSmile*mouthHeight*0.5;
+		dc2x = dx - mouthPurse/2;
+		dc2y = dy;
+		d += 'c '+dc1x+','+dc1y+' '+dc2x+','+dc2y+' '+dx+','+dy+' ';
+		mouth.setAttribute('d',d);
+		
+		// Lip Highlights (needs complementary shadow)
+// 		if (this.bio('lipSize') > 1) {
+// 			var nearLipHighlight = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+// 			headGroup.appendChild(nearLipHighlight);
+// 			nearLipHighlight.setAttribute('cx',topOfMouth.x+mouthPurse*0.5+facing/10);
+// 			nearLipHighlight.setAttribute('cy',topOfMouth.y+mouthHeight+lipSize*0.5+mouthGrimace*0.5+mouthSmile);
+// 			nearLipHighlight.setAttribute('rx',mouthPurse*0.2);
+// 			nearLipHighlight.setAttribute('ry',lipSize*0.2);
+// 			nearLipHighlight.setAttribute('fill','white');
+// 			nearLipHighlight.setAttribute('stroke','none');
+// 			nearLipHighlight.setAttribute('opacity','0.3');
+// 		
+// 			var farLipHighlight = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+// 			headGroup.appendChild(farLipHighlight);
+// 			farLipHighlight.setAttribute('cx',topOfMouth.x-mouthPurse*0.5+facing/10);
+// 			farLipHighlight.setAttribute('cy',topOfMouth.y+mouthHeight+lipSize*0.5+mouthGrimace*0.5+mouthSmile);
+// 			farLipHighlight.setAttribute('rx',mouthPurse*0.2);
+// 			farLipHighlight.setAttribute('ry',lipSize*0.2);
+// 			farLipHighlight.setAttribute('fill','white');
+// 			farLipHighlight.setAttribute('stroke','none');
+// 			farLipHighlight.setAttribute('opacity','0.3');
+// 		};
+				
 		var noseGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
 		headGroup.appendChild(noseGroup);
 		var nosePoint = document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -1949,23 +2107,9 @@ function GamenBody() {
 		x = headCenter.x+facing;
 		y = noseCenter.y+noseWidth*0.6;
 		d = 'M '+x+','+y+' ';
-		d += 'C '+x+','+(y-nostrilLift*3)+' '+(noseCenter.x-0.5*noseWidth*noseFacing)+','+(y-nostrilLift)+' '+(noseCenter.x-0.5*noseWidth*noseFacing)+','+y+' ';
+		d += 'C '+x+','+(y-nostrilLift*3)+' '+(noseCenter.x-noseFacing)+','+(y-nostrilLift)+' '+(noseCenter.x-noseFacing)+','+y+' ';
 		nostril.setAttribute('d',d);
-
-		var mouth = document.createElementNS('http://www.w3.org/2000/svg','path');
-		headGroup.appendChild(mouth);
-		mouth.setAttribute('stroke','none');
-		mouth.setAttribute('fill','black');
-		x = topOfMouth.x;
-		y = topOfMouth.y;
-		d = 'M '+x+','+y+' ';
-		d += 'C '+(x-headWidth/4)+','+y+' '+nearMouthCorner.x+','+nearMouthCorner.y+' '+nearMouthCorner.x+','+nearMouthCorner.y+' ';
-		d += 'C '+nearMouthCorner.x+','+nearMouthCorner.y+' '+(x-headWidth/4)+','+(y+mouthHeight)+' '+x+','+(y+mouthHeight)+' ';
-		d += 'C '+(x+headWidth/4)+','+(y+mouthHeight)+' '+farMouthCorner.x+','+farMouthCorner.y+' '+farMouthCorner.x+','+farMouthCorner.y+' ';
-		d += 'C '+farMouthCorner.x+','+farMouthCorner.y+' '+(x+headWidth/4)+','+y+' '+x+','+y;
-		mouth.setAttribute('d',d);
-		
-		
+				
 		var noseShadow = document.createElementNS('http://www.w3.org/2000/svg','path');
 		noseShadow.setAttribute('fill','black');
 		noseShadow.setAttribute('opacity',0.2);
@@ -1991,54 +2135,192 @@ function GamenBody() {
 		d += 'C' + c1x + "," + c1y + " " + c2x + "," + c2y + " " + x + "," + y + " ";
 		noseShadow.setAttribute('d',d);
 		noseShadow.setAttribute('transform','rotate('+(-1*headTilt)+' '+(x+headCenter.x+facing)/2+' '+noseCenter.y+')');
+		
+		var nearEyebrowArch = 3 * pose.nearEyebrowArch / Math.PI;
+		var farEyebrowArch = 3 * pose.farEyebrowArch / Math.PI;
+
+		var nearEyebrowBack = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(nearEyebrowBack);
+		x = nearEyeCenter.x-eyeSize*1.2;
+		y = nearTemple.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y + nearEyebrowArch;
+		x = nearEyeCenter.x+eyeSize*0.8;
+		y = nearTemple.y;
+		c2x = x - browSize;
+		c2y = y + nearEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - browSize;
+		c1y = y - headHeight/8;
+		x = nearEyeCenter.x-eyeSize*1.2;
+		y = nearTemple.y;
+		c2x = x;
+		c2y = y - headHeight/8;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		nearEyebrowBack.setAttribute('d',d);
+		
+		var nearEyebrow = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(nearEyebrow);
+		nearEyebrow.setAttribute('fill',hairColor);
+		nearEyebrow.setAttribute('stroke','black');
+		nearEyebrow.setAttribute('stroke-width',1);
+		x = nearEyeCenter.x-eyeSize*1.2;
+		y = nearTemple.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y + nearEyebrowArch;
+		x = nearEyeCenter.x+eyeSize*0.8;
+		y = nearTemple.y;
+		c2x = x - browSize;
+		c2y = y + nearEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + browSize;
+		c1y = y - nearEyebrowArch;
+		x = nearEyeCenter.x+eyeSize*0.8;
+		y = nearTemple.y - browSize;
+		c2x = x + browSize;
+		c2y = y - nearEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - browSize;
+		c1y = y + nearEyebrowArch;
+		x = nearEyeCenter.x-eyeSize*1.2;
+		y = nearTemple.y;
+		c2x = x;
+		c2y = y + nearEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		nearEyebrow.setAttribute('d',d);
+				
+		var farEyebrowBack = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(farEyebrowBack);
+		x = farEyeCenter.x+eyeSize*1.2;
+		y = farTemple.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y + farEyebrowArch;
+		x = farEyeCenter.x-eyeSize*0.8;
+		y = farTemple.y;
+		c2x = x + browSize;
+		c2y = y + farEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + browSize;
+		c1y = y - headHeight/8;
+		x = farEyeCenter.x+eyeSize*1.2;
+		y = farTemple.y;
+		c2x = x;
+		c2y = y - headHeight/8;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		farEyebrowBack.setAttribute('d',d);
+		
+		var farEyebrow = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(farEyebrow);
+		farEyebrow.setAttribute('fill',hairColor);
+		farEyebrow.setAttribute('stroke','black');
+		farEyebrow.setAttribute('stroke-width',1);
+		x = farEyeCenter.x+eyeSize*1.2;
+		y = farTemple.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y + farEyebrowArch;
+		x = farEyeCenter.x-eyeSize*0.8;
+		y = farTemple.y;
+		c2x = x + browSize;
+		c2y = y + farEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - browSize;
+		c1y = y - farEyebrowArch;
+		x = farEyeCenter.x-eyeSize*0.8;
+		y = farTemple.y - browSize;
+		c2x = x - browSize;
+		c2y = y - farEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + browSize;
+		c1y = y + farEyebrowArch;
+		x = farEyeCenter.x+eyeSize*1.2;
+		y = farTemple.y;
+		c2x = x;
+		c2y = y + farEyebrowArch;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		farEyebrow.setAttribute('d',d);
+		
+		var hairBangs = document.createElementNS('http://www.w3.org/2000/svg','path');
+		headGroup.appendChild(hairBangs);
+		hairBangs.setAttribute('stroke','black');
+		hairBangs.setAttribute('stroke-width',1);
+		hairBangs.setAttribute('fill',hairColor);
+		x = headCenter.x-headWidth*0.65;
+		y = headCenter.y-headHeight*0.1;		
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y - headHeight*0.3;
+		x = headCenter.x+headWidth*0.65;
+		y = headCenter.y-headHeight*0.1;
+		c2x = x;
+		c2y = y - headHeight*0.3;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y - headWidth * 0.4;
+		x = headCenter.x;
+		y = headCenter.y-headHeight*0.6;
+		c2x = x + headWidth * 0.4;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - headWidth * 0.4;
+		c1y = y;
+		x = headCenter.x-headWidth*0.65;
+		y = headCenter.y-headHeight*0.1;
+		c2x = x;
+		c2y = y - headWidth * 0.4;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		hairBangs.setAttribute('d',d);
 				
 		// Face Guides
-		var faceGuides = document.createElementNS('http://www.w3.org/2000/svg','g');
-		headGroup.appendChild(faceGuides);
-		faceGuides.setAttribute('stroke','black');
-		faceGuides.setAttribute('stroke-width',0.05);
-		faceGuides.setAttribute('fill','none');
-		var verticalGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
-		faceGuides.appendChild(verticalGuide);
-		facing = headWidth/3;
-		if (!upperBodyAngle) {
-			facing *= -1;
-		};
-		d = 'M '+headCenter.x+','+(headCenter.y-headHeight/2)+' ';
-		d += 'C '+(headCenter.x+facing)+','+(headCenter.y-headHeight/2)+' '+(headCenter.x+facing)+','+(headCenter.y+headHeight/2)+' '+' '+(headCenter.x)+','+(headCenter.y+headHeight/2);
-		verticalGuide.setAttribute('d',d);
-		var middleGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
-		faceGuides.appendChild(middleGuide);
-		var nearFacing, farFacing;
-		var facing = 10*pose.headNod/Math.PI;
-		if (upperBodyAngle) {
-			nearFacing = facing;
-			farFacing  = 2*facing;
-		} else {
-			nearFacing = 2*facing;
-			farFacing  = facing;
-		};
-		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y)+' ';
-		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y);
-		middleGuide.setAttribute('d',d);
-		var noseGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
-		faceGuides.appendChild(noseGuide);
-		var facing = 10*pose.headNod/Math.PI;
-		if (!upperBodyAngle) {
-			facing *= -1;
-		};
-		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4)+' ';
-		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4);
-		noseGuide.setAttribute('d',d);
-		var mouthGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
-		faceGuides.appendChild(mouthGuide);
-		var facing = 10*pose.headNod/Math.PI;
-		if (!upperBodyAngle) {
-			facing *= -1;
-		};
-		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3)+' ';
-		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3);
-		mouthGuide.setAttribute('d',d);
+// 		var faceGuides = document.createElementNS('http://www.w3.org/2000/svg','g');
+// 		headGroup.appendChild(faceGuides);
+// 		faceGuides.setAttribute('stroke','black');
+// 		faceGuides.setAttribute('stroke-width',0.05);
+// 		faceGuides.setAttribute('fill','none');
+// 		var verticalGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+// 		faceGuides.appendChild(verticalGuide);
+// 		facing = headWidth/3;
+// 		if (!upperBodyAngle) {
+// 			facing *= -1;
+// 		};
+// 		d = 'M '+headCenter.x+','+(headCenter.y-headHeight/2)+' ';
+// 		d += 'C '+(headCenter.x+facing)+','+(headCenter.y-headHeight/2)+' '+(headCenter.x+facing)+','+(headCenter.y+headHeight/2)+' '+' '+(headCenter.x)+','+(headCenter.y+headHeight/2);
+// 		verticalGuide.setAttribute('d',d);
+// 		var middleGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+// 		faceGuides.appendChild(middleGuide);
+// 		var nearFacing, farFacing;
+// 		var facing = 10*pose.headNod/Math.PI;
+// 		if (upperBodyAngle) {
+// 			nearFacing = facing;
+// 			farFacing  = 2*facing;
+// 		} else {
+// 			nearFacing = 2*facing;
+// 			farFacing  = facing;
+// 		};
+// 		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y)+' ';
+// 		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y);
+// 		middleGuide.setAttribute('d',d);
+// 		var noseGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+// 		faceGuides.appendChild(noseGuide);
+// 		var facing = 10*pose.headNod/Math.PI;
+// 		if (!upperBodyAngle) {
+// 			facing *= -1;
+// 		};
+// 		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4)+' ';
+// 		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/4+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/4);
+// 		noseGuide.setAttribute('d',d);
+// 		var mouthGuide = document.createElementNS('http://www.w3.org/2000/svg','path');
+// 		faceGuides.appendChild(mouthGuide);
+// 		var facing = 10*pose.headNod/Math.PI;
+// 		if (!upperBodyAngle) {
+// 			facing *= -1;
+// 		};
+// 		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3)+' ';
+// 		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3);
+// 		mouthGuide.setAttribute('d',d);
 				
 		var hair = document.createElementNS('http://www.w3.org/2000/svg','g');
 		
@@ -2065,7 +2347,7 @@ function GamenBody() {
 		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
 		var bigBelly = farBellyBottom.y > farHaunch.y + haunchWidth || nearBellyBottom.y > nearHaunch.y + haunchWidth;
 		
-		var bodyParts = [hair,shoulders];
+		var bodyParts = [hairBack,shoulders];
 		
 		if (lowerBodyAngle) {
 			bodyParts = bodyParts.concat([butt,farFoot,farCalf,farThigh]);
