@@ -1089,7 +1089,7 @@ function GamenBody() {
 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',nearHaunch.x);
 		circle.setAttribute('cy',nearHaunch.y);
-		circle.setAttribute('r',haunchWidth);
+		circle.setAttribute('r',thighWidth*0.25);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		nearThigh.appendChild(rect);
 		rect.setAttribute('x',(nearHip.x+nearKnee.x)/2-thighWidth * 0.5);
@@ -1701,50 +1701,46 @@ function GamenBody() {
 		nearPath.setAttribute('d',nearD);
 		var abs = document.createElementNS('http://www.w3.org/2000/svg','g');
 		belly.appendChild(abs);
-		var nearTopAb = {
-			x: nearBreastAnchor.x + bellyOffset,
-			y: Math.min(nearBreastCenter.y + breastSize,nearBreastAnchor.y + torsoHeight*0.4),
-		};
-		var farTopAb = {
-			x: farBreastAnchor.x + bellyOffset,
-			y: Math.min(farBreastCenter.y + breastSize,farBreastAnchor.y + torsoHeight*0.4),
-		};
-		var nearAbGap = (10*nearTopAb.x+9*farTopAb.x)/19;
-		var farAbGap = (10*farTopAb.x+9*nearTopAb.x)/19;
-		var stepY = (Math.max(farTopAb.y,nearTopAb.y) - Math.min(farHip.y,nearHip.y)) / -4 ;
-		var nearStepX = (farTopAb.x - nearTopAb.x) / 13;
-		var farStepX = (farTopAb.x - nearTopAb.x) / 13;
-		if (upperBodyAngle) {
-			farStepX *= 1.5;
-		} else {
-			nearStepX *= 1.5;
-		};
 		if (this.bio('belly') < 1) {
-			for (var i=0;i<4;i++) {
+			var nearTopAb = {
+				x: nearBreastAnchor.x + bellyOffset,
+				y: Math.min(nearBreastCenter.y + breastSize,nearBreastAnchor.y + torsoHeight*0.4),
+			};
+			var farTopAb = {
+				x: farBreastAnchor.x + bellyOffset,
+				y: Math.min(farBreastCenter.y + breastSize,farBreastAnchor.y + torsoHeight*0.4),
+			};
+			var centerX = (farTopAb.x + nearTopAb.x)/2;
+			console.log(bellySize);
+			var abBulge = bellySize/7;
+			var centerBulge = abBulge * -1;
+			if (upperBodyAngle) {
+				centerBulge *= -1;
+			};
+			var stepX = 3;
+			var stepY = (Math.max(farTopAb.y,nearTopAb.y) - Math.min(farHip.y,nearHip.y)) / -4 ;
+			for (var i=3;i>=0;i--) {
 				var opacity = (1-this.bio('belly'))/(1+i);
-				var nearAb = document.createElementNS('http://www.w3.org/2000/svg','path');
-				belly.appendChild(nearAb);
-				nearAb.setAttribute('stroke','black');
-				nearAb.setAttribute('stroke-width',1);
-				nearAb.setAttribute('opacity',opacity);
+				var abStroke = document.createElementNS('http://www.w3.org/2000/svg','path');
+				abStroke.id = 'abs_'+i;
+				abStroke.setAttribute('stroke','black');
+				abStroke.setAttribute('stroke-width',1);
+				abStroke.setAttribute('stroke-opacity',opacity);
+				abStroke.setAttribute('fill','none');
 				var thisAbY = nearTopAb.y + stepY * i;
-				var middleY = (nearTopAb.y + farTopAb.y)/2 + stepY * i;
-				nearD = 'M '+(nearTopAb.x+nearStepX*i)+','+thisAbY+' ';
-				nearD += 'L '+(nearTopAb.x+nearStepX*i)+','+(thisAbY + 0.8*stepY)+' ';
-				nearD += 'L '+nearAbGap+','+(middleY + 0.8*stepY)+' ';
-				nearD += 'L '+nearAbGap+','+middleY+' ';
-				nearAb.setAttribute('d',nearD);
-				var farAb = document.createElementNS('http://www.w3.org/2000/svg','path');
-				belly.appendChild(farAb);
-				farAb.setAttribute('stroke','black');
-				farAb.setAttribute('stroke-width',1);
-				farAb.setAttribute('opacity',opacity);
-				thisAbY = farTopAb.y + stepY * i;
-				farD = 'M '+(farTopAb.x-farStepX*i)+','+thisAbY+' ';
-				farD += 'L '+(farTopAb.x-farStepX*i)+','+(thisAbY+ 0.8*stepY)+' ';
-				farD += 'L '+farAbGap+','+(middleY + 0.8*stepY)+' ';
-				farD += 'L '+farAbGap+','+middleY+' ';
-				farAb.setAttribute('d',farD);
+				var diffX = stepX * i;
+				d = 'M '+(nearTopAb.x+diffX)+','+thisAbY+' ';
+				d += 'C '+(nearTopAb.x-abBulge+diffX)+','+thisAbY+' '+(nearTopAb.x-abBulge+diffX)+','+(thisAbY+stepY)+' '+(nearTopAb.x+diffX)+','+(thisAbY+stepY)+' ';
+				d += 'C '+(nearTopAb.x-diffX)+','+(thisAbY+stepY+abBulge)+' '+centerX+','+(thisAbY+stepY+abBulge)+' '+centerX+','+(thisAbY+stepY)+' ';
+				d += 'C '+(centerX+centerBulge)+','+(thisAbY+stepY)+' '+(centerX+centerBulge)+','+thisAbY+' '+centerX+','+thisAbY+' ';
+				d += 'C '+(centerX+centerBulge)+','+thisAbY+' '+(centerX+centerBulge)+','+(thisAbY+stepY)+' '+centerX+','+(thisAbY+stepY)+' ';
+				d += 'C '+centerX+','+(thisAbY+stepY+abBulge)+' '+farTopAb.x+','+(thisAbY+stepY+abBulge)+' '+(farTopAb.x-diffX)+','+(thisAbY+stepY)+' ';
+				d += 'C '+(farTopAb.x+abBulge-diffX)+','+(thisAbY+stepY)+' '+(farTopAb.x+abBulge-diffX)+','+thisAbY+' '+(farTopAb.x-diffX)+','+thisAbY+' ';
+				abStroke.setAttribute('d',d);
+				var abBack = document.createElementNS('http://www.w3.org/2000/svg','path');
+				abBack.setAttribute('d',d);
+				abs.appendChild(abBack);
+				abs.appendChild(abStroke);
 			};
 		};
 		var navel = document.createElementNS('http://www.w3.org/2000/svg','g');
