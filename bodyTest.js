@@ -1151,9 +1151,9 @@ function GamenBody() {
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 		farThigh.appendChild(circle);
 		circle.setAttribute('stroke','none');
-		circle.setAttribute('cx',farHaunch.x);
-		circle.setAttribute('cy',farHaunch.y);
-		circle.setAttribute('r',haunchWidth);
+		circle.setAttribute('cx',farHip.x);
+		circle.setAttribute('cy',farHip.y);
+		circle.setAttribute('r',thighWidth*0.25);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		farThigh.appendChild(rect);
 		rect.setAttribute('x',(farHip.x+farKnee.x)/2-thighWidth * 0.5);
@@ -1170,13 +1170,6 @@ function GamenBody() {
 		circle.setAttribute('cx',farKnee.x);
 		circle.setAttribute('cy',farKnee.y);
 		circle.setAttribute('r',thighWidth * 0.3);
-		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
-		farThigh.appendChild(path);
-		var leftX = ((3*farHip.x+spineBase.x)/4) - this.bio('hipsWidth')*30;
-		var rightX = ((3*farHip.x+spineBase.x)/4) + this.bio('hipsWidth')*30;
-		d = 'M '+leftX+','+((3*farHip.y+spineBase.y)/4);
-		d += ' A '+(this.bio('hipsWidth')*30)+','+(this.bio('hipsWidth')*30)+' 1 1 0 '+rightX+','+((3*farHip.y+spineBase.y)/4);
-		path.setAttribute('d',d);
 		
 		var nearThigh = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearThigh.id = 'nearThigh';
@@ -1185,8 +1178,8 @@ function GamenBody() {
 		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
 		nearThigh.appendChild(circle);
 		circle.setAttribute('stroke','none');
-		circle.setAttribute('cx',nearHaunch.x);
-		circle.setAttribute('cy',nearHaunch.y);
+		circle.setAttribute('cx',nearHip.x);
+		circle.setAttribute('cy',nearHip.y);
 		circle.setAttribute('r',thighWidth*0.25);
 		var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		nearThigh.appendChild(rect);
@@ -1204,13 +1197,6 @@ function GamenBody() {
 		circle.setAttribute('cx',nearKnee.x);
 		circle.setAttribute('cy',nearKnee.y);
 		circle.setAttribute('r',thighWidth * 0.3);
-		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
-		nearThigh.appendChild(path);
-		var leftX = ((3*nearHip.x+spineBase.x)/4) - this.bio('hipsWidth')*30;
-		var rightX = ((3*nearHip.x+spineBase.x)/4) + this.bio('hipsWidth')*30;
-		d = 'M '+leftX+','+((3*nearHip.y+spineBase.y)/4);
-		d += ' A '+(this.bio('hipsWidth')*30)+','+(this.bio('hipsWidth')*30)+' 1 1 0 '+rightX+','+((3*nearHip.y+spineBase.y)/4);
-		path.setAttribute('d',d);
 		
 		var butt = document.createElementNS('http://www.w3.org/2000/svg','g');
 		butt.id = 'butt';
@@ -1921,7 +1907,7 @@ function GamenBody() {
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		c1x = x + genitalsFacing * labioscrotalSize * -0.25;
 		c1y = y;
-		x = genitalsTop.x-genitalsFacing*hipsWidth;
+		x = genitalsTop.x-genitalsFacing*hipsWidth*0.8;
 		y = genitalsTop.y;
  		c2x = x;
 		c2y = y;
@@ -2894,7 +2880,7 @@ function GamenBody() {
 		// Order the Stack
 		
 		var lapSizedBreasts = Math.max(nearBreastCenter.y + breastSize,farBreastCenter.y + breastSize) > Math.min(nearHip.y - this.bio('hipsWidth') * 30,farHip.y - this.bio('hipsWidth') * 30);
-		var bigBelly = farBellyBottom.y > farHaunch.y + haunchWidth || nearBellyBottom.y > nearHaunch.y + haunchWidth;
+		var bigBelly = farBellyBottom.y > farHaunch.y || nearBellyBottom.y > nearHaunch.y;
 		
 		var bodyParts = [hairBack,shoulders];
 		
@@ -2911,9 +2897,7 @@ function GamenBody() {
 		};
 		
 		torso.appendChild(belly);
-		bodyParts = bodyParts.concat([torso,genitals,phallus]);
-		
-		bodyParts = bodyParts.concat([neck,headGroup,hair]);
+		bodyParts = bodyParts.concat([torso,neck,genitals,phallus]);
 
 		if (!lapSizedBreasts && upperBodyAngle) {
 			bodyParts = bodyParts.concat([farBreast,nearBreast]);
@@ -2932,6 +2916,8 @@ function GamenBody() {
 		} else if (lapSizedBreasts) {
 			bodyParts = bodyParts.concat([nearBreast,farBreast]);
 		};
+		
+		bodyParts = bodyParts.concat([headGroup,hair]);
 		
 		if (upperBodyAngle) {
 			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
