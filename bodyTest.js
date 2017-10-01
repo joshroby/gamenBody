@@ -121,6 +121,9 @@ var handlers = {
 			toggleShotBtn.innerHTML = "Money Shot";
 		} else if (model.options.shot == 'head') {
 			model.options.shot = 'money'
+			toggleShotBtn.innerHTML = "Hand Shot";
+		} else if (model.options.shot == 'money') {
+			model.options.shot = 'hand'
 			toggleShotBtn.innerHTML = "Full Body Shot";
 		} else {
 			model.options.shot = 'fullBody'
@@ -289,6 +292,16 @@ function GamenBody() {
 			curve: 'camel',
 		},
 		
+		handLength: {
+			root: 1.04,
+			curve: 'bell',
+		},
+		
+		handWidth: {
+			root: 1.04,
+			curve: 'bell',
+		},
+		
 		footLength: {
 			root: 1.05,
 			curve: 'bell',
@@ -426,11 +439,11 @@ function GamenBody() {
 	};
 	
 	this.library = {
-		boring: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.11419126845867289,"farKneeBend":0.06594040047696802,"farThighLift":0.15779390417624337,"farUpperArmLift":0.523598775598299,"fingersSplay":-0.04216787355183169,"fingersCurl":0.2752583919263869,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.471238898038469,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.2745964121486912,"phallusErection":0,"shouldersTip":0,},	
-		hello: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.296705972839036,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.94960643587042,"farFootPoint":0.1118450477825812,"farForearmLift":-2.84488668075076,"farKneeBend":-0.418879020478639,"farThighLift":0.418879020478639,"farUpperArmLift":2.12930168743308,"fingersSplay":-0.04216787355183169,"fingersCurl":0.2752583919263869,"headNod":-0.010291833989164266,"headSlide":0.802851455917392,"headTip":0.366519142918809,"hipsCant":-0.296705972839036,"mouthOpen":-1.67551608191456,"mouthPurse":0.680678408277789,"mouthSmile":3.12413936106985,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":1.08210413623648,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-1.01229096615671,"phallusErection":2.460914245312,"shouldersTip":0.296705972839036},
-		run: {"eyePositionX":-0.855211333477221,"eyePositionY":-0.523598775598299,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.85004900711399,"farEyeLowerLid":-1.13446401379631,"farEyebrowArch":1.51843644923507,"farFootPoint":0.1118450477825812,"farForearmLift":-1.01229096615671,"farKneeBend":1.01229096615671,"farThighLift":-0.296705972839036,"farUpperArmLift":0.628318530717959,"fingersSplay":-0.04216787355183169,"fingersCurl":0.2752583919263869,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.296705972839036,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-2.77507351067098,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":2.18166156499291,"nearFootPoint":-0.935868670139553,"nearForearmLift":-2.77507351067098,"nearKneeBend":0.628318530717959,"nearThighLift":-0.366519142918809,"nearUpperArmLift":-0.855211333477221,"phallusErection":0,"shouldersTip":0},
-		squat: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.09955742875643,"farEyeOuterLid":-1.09955742875643,"farEyeLowerLid":0.767944870877505,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.715584993317675,"farKneeBend":0,"farThighLift":0.715584993317675,"farUpperArmLift":0.820304748437335,"fingersSplay":-0.04216787355183169,"fingersCurl":0.2752583919263869,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.279252680319093,"hipsCant":0,"mouthOpen":-1.27409035395586,"mouthPurse":1.20427718387609,"mouthSmile":1.48352986419518,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":1.0471975511966,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.715584993317675,"nearKneeBend":0.488692190558412,"nearThighLift":-0.715584993317675,"nearUpperArmLift":-0.890117918517108,"phallusErection":0,"shouldersTip":0},
-		bolero: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"fingersSplay":-0.04216787355183169,"fingersCurl":0.2752583919263869,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
+		boring: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.11419126845867289,"farKneeBend":0.06594040047696802,"farThighLift":0.15779390417624337,"farUpperArmLift":0.715584993317675,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":1.0471975511966,"nearHandTilt":1.64060949687467,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.663225115757845,"phallusErection":0,"shouldersTip":0},	
+		hello: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.296705972839036,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.94960643587042,"farFootPoint":0.1118450477825812,"farForearmLift":-2.84488668075076,"farKneeBend":-0.418879020478639,"farThighLift":0.418879020478639,"farUpperArmLift":2.12930168743308,"headNod":-0.010291833989164266,"headSlide":0.802851455917392,"headTip":0.366519142918809,"hipsCant":-0.296705972839036,"mouthOpen":-1.67551608191456,"mouthPurse":0.680678408277789,"mouthSmile":3.12413936106985,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.820304748437335,"nearHandSplay":0.488692190558412,"nearHandTilt":0.383972435438753,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-1.22173047639603,"phallusErection":2.460914245312,"shouldersTip":0.296705972839036},
+		run: {"eyePositionX":-0.855211333477221,"eyePositionY":-0.523598775598299,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.85004900711399,"farEyeLowerLid":-1.13446401379631,"farEyebrowArch":1.51843644923507,"farFootPoint":0.1118450477825812,"farForearmLift":-1.01229096615671,"farKneeBend":1.01229096615671,"farThighLift":-0.296705972839036,"farUpperArmLift":0.628318530717959,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.296705972839036,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-2.77507351067098,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":2.18166156499291,"nearFootPoint":-0.935868670139553,"nearForearmLift":-1.76278254451427,"nearHandSplay":0,"nearHandTilt":-1.8151424220741,"nearKneeBend":0.628318530717959,"nearThighLift":-0.366519142918809,"nearUpperArmLift":-0.715584993317675,"phallusErection":0,"shouldersTip":0},
+		squat: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.09955742875643,"farEyeOuterLid":-1.09955742875643,"farEyeLowerLid":0.767944870877505,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.715584993317675,"farKneeBend":0,"farThighLift":0.715584993317675,"farUpperArmLift":0.820304748437335,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.279252680319093,"hipsCant":0,"mouthOpen":-1.27409035395586,"mouthPurse":1.20427718387609,"mouthSmile":1.48352986419518,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":1.0471975511966,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.436332312998582,"nearHandSplay":0.767944870877505,"nearHandTilt":0.872664625997165,"nearKneeBend":0.488692190558412,"nearThighLift":-0.715584993317675,"nearUpperArmLift":-0.942477796076938,"phallusErection":0,"shouldersTip":0},
+		bolero: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandSplay":0.488692190558412,"nearHandTilt":-0.331612557878923,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
 	};
 
 
@@ -457,7 +470,7 @@ function GamenBody() {
 
 	
 	this.pose = {};
-	for (i of [ "eyePositionX", "eyePositionY", "farEyeInnerLid", "farEyeOuterLid", "farEyeLowerLid", "farEyebrowArch", "farFootPoint", "farForearmLift", "farKneeBend", "farThighLift", "farUpperArmLift", "fingersSplay", "fingersCurl", "headNod", "headSlide", "headTip", "hipsCant", "mouthOpen", "mouthPurse", "mouthSmile", "mouthGrimace", "mouthSmirk", "nearEyeInnerLid", "nearEyeOuterLid", "nearEyeLowerLid", "nearEyebrowArch", "nearFootPoint", "nearForearmLift", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "phallusErection", "shouldersTip"]) {
+	for (i of [ "eyePositionX", "eyePositionY", "farEyeInnerLid", "farEyeOuterLid", "farEyeLowerLid", "farEyebrowArch", "farFootPoint", "farForearmLift", "farHandCurl", "farHandSplay", "farHandTilt", "farHandTurn", "farKneeBend", "farThighLift", "farUpperArmLift", "headNod", "headSlide", "headTip", "hipsCant", "mouthOpen", "mouthPurse", "mouthSmile", "mouthGrimace", "mouthSmirk", "nearEyeInnerLid", "nearEyeOuterLid", "nearEyeLowerLid", "nearEyebrowArch", "nearFootPoint", "nearForearmLift", "nearHandCurl", "nearHandSplay", "nearHandTilt", "nearHandTurn", "nearKneeBend", "nearThighLift", "nearUpperArmLift", "phallusErection", "shouldersTip"]) {
 		this.pose[i] = Math.random() * Math.random() * Math.random() * Math.PI;
 		if (Math.random() > 0.5) {this.pose[i] *= -1;};
 		if (i == 'shouldersTip' || i == 'hipsCant' || i == 'headTip') {this.pose[i] /= 4;};
@@ -479,6 +492,8 @@ function GamenBody() {
 	for (var i in this.pose) {
 		this.pose[i] = this.library[pose][i];
 	};
+	
+	this.clothing = [new GamenGarment,new GamenGarment,new GamenGarment];
 	
 	this.bio = function(key) {
 		var result = this.biometrics[key];
@@ -587,6 +602,10 @@ function GamenBody() {
 			moneyShot = svg.getElementById('moneyShot');
 			viewBoxString = moneyShot.getAttribute('x') + ' ' + moneyShot.getAttribute('y') + ' ' + moneyShot.getAttribute('width') + ' ' + moneyShot.getAttribute('height');
 			svg.setAttribute('viewBox',viewBoxString);
+		} else if (shot == 'hand') {
+			handShot = svg.getElementById('handShot');
+			viewBoxString = handShot.getAttribute('x') + ' ' + handShot.getAttribute('y') + ' ' + handShot.getAttribute('width') + ' ' + handShot.getAttribute('height');
+			svg.setAttribute('viewBox',viewBoxString);
 		};
 		
 		return svg;
@@ -594,9 +613,7 @@ function GamenBody() {
 	};
 	
 	this.svg = function (height) {
-	
-		pose = this.pose;
-		
+			
 		// Coloring
 		
 		if (this.coloring.custom == undefined) {
@@ -690,7 +707,7 @@ function GamenBody() {
 		shadow.setAttribute('rx',100);
 		shadow.setAttribute('ry',20);
 		shadow.setAttribute('fill','lightgrey');
-		
+				
 		// Height Proportions
 		var headHeightProportion = this.bio('headHeight')*0.2;
 		var neckHeightProportion = this.bio('neckHeight')*0.03;
@@ -895,7 +912,7 @@ function GamenBody() {
 			y: Math.min(nearBreastCenter.y - breastSize/2 + this.bio('breastSag')/2.4 * breastSize * 1.5,nearBreastCenter.y + breastSize),
 		};
 		var nippleWidth = this.bio('nippleWidth') * 10;
-		var nippleLength = this.bio('nippleLength') * 6;
+		var nippleLength = this.bio('nippleLength') * 4;
 		if (!upperBodyAngle) {
 			nippleLength *= -1;
 		};
@@ -1356,6 +1373,10 @@ function GamenBody() {
 		tilt = this.pos('nearUpperArmLift') * -180/Math.PI;
 		bicep.setAttribute('transform','rotate('+tilt+' '+nearShoulder.x+' '+nearShoulder.y+')');		
 
+		var handLength = this.bio('handLength')*30;
+		var handWidth = this.bio('handWidth') * handLength * 0.7;
+		var nearHandTilt = this.pos('nearHandTilt') * -180/Math.PI;
+		
 		var farLowerArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farLowerArm.id = 'farLowerArm';
 		farLowerArm.setAttribute('fill',skinTone);
@@ -1381,7 +1402,7 @@ function GamenBody() {
 // 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',farWrist.x);
 		circle.setAttribute('cy',farWrist.y);
-		circle.setAttribute('r',10);
+		circle.setAttribute('r',handWidth*0.33);
 
 		var nearLowerArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearLowerArm.id = 'nearLowerArm';
@@ -1397,7 +1418,7 @@ function GamenBody() {
 		nearLowerArm.appendChild(rect);
 		rect.setAttribute('x',(nearElbow.x+nearWrist.x)/2-this.bio('armWidth') * 10);
 		rect.setAttribute('y',(nearElbow.y+nearWrist.y)/2-forearmLength/1.8);
-		rect.setAttribute('height',forearmLength * 1);
+		rect.setAttribute('height',forearmLength * 1.1);
 		rect.setAttribute('width',this.bio('armWidth') * 20);
 		rect.setAttribute('rx',this.bio('armWidth') * 20);
 		rect.setAttribute('ry',forearmLength);
@@ -1408,7 +1429,163 @@ function GamenBody() {
 // 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',nearWrist.x);
 		circle.setAttribute('cy',nearWrist.y);
-		circle.setAttribute('r',10);
+		circle.setAttribute('r',handWidth*0.33);
+		
+		var nearHand = document.createElementNS('http://www.w3.org/2000/svg','g');
+		nearHand.id = 'nearHand';
+		nearHand.setAttribute('fill',skinTone);
+		nearHand.setAttribute('stroke','inherit');
+		var nearPalm = document.createElementNS('http://www.w3.org/2000/svg','path');
+		nearHand.appendChild(nearPalm);
+		x = nearWrist.x - handWidth * 0.35;
+		y = nearWrist.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x + handWidth * 0.1;
+		c1y = y - handLength * 0.1;
+		x = x + handWidth * 0.7;
+		y = y;
+		c2x = x - handWidth * 0.1;
+		c2y = y - handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + handWidth * 0.1;
+		c1y = y + handLength * 0.1;
+		x = x;
+		y = y + handLength;
+		c2x = x + handWidth * 0.1;
+		c2y = y - handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - handWidth * 0.1;
+		c1y = y + handLength * 0.1;
+		x = x - handWidth;
+		y = y - handLength * 0.1;
+		c2x = x + handWidth * 0.1;
+		c2y = y + handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - handWidth * 0.1;
+		c1y = y - handLength * 0.1;
+		x = x + handWidth * 0.3;
+		y = y - handLength * 0.9;
+		c2x = x - handWidth * 0.1;
+		c2y = y + handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		d += ' z';
+		nearPalm.setAttribute('d',d);
+		nearHand.setAttribute('transform','rotate('+nearHandTilt+' '+nearWrist.x+' '+nearWrist.y+')');
+		var thumbProximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		nearHand.appendChild(thumbProximal);
+		var phalange = {
+			x: nearWrist.x+handWidth*0.3,
+			y: nearWrist.y+handLength*0.2,
+			length: handLength*0.7,
+		};
+		thumbProximal.setAttribute('x',phalange.x - handWidth*0.15);
+		thumbProximal.setAttribute('y',phalange.y);
+		thumbProximal.setAttribute('height',phalange.length);
+		thumbProximal.setAttribute('width',handWidth*0.3);
+		thumbProximal.setAttribute('rx',handWidth*0.2);
+		thumbProximal.setAttribute('ry',handLength*0.5);
+		var tilt = -15 - 60*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
+		thumbProximal.setAttribute('transform','rotate('+tilt+' '+phalange.x+' '+phalange.y+')');
+		var thumbDistal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		nearHand.appendChild(thumbDistal);
+		phalange = {
+			x: phalange.x - Math.sin(tilt * Math.PI / 180) * phalange.length*0.8,
+			y: phalange.y + Math.cos(tilt * Math.PI / 180) * phalange.length*0.8,
+			length: handLength*0.4,
+		};
+		thumbDistal.setAttribute('x',phalange.x);
+		thumbDistal.setAttribute('y',phalange.y);
+		thumbDistal.setAttribute('height',phalange.length);
+		thumbDistal.setAttribute('width',handWidth*0.2);
+		thumbDistal.setAttribute('rx',handWidth*0.2);
+		thumbDistal.setAttribute('ry',handLength*0.5);
+		var tilt = 20 - 90*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
+		thumbDistal.setAttribute('transform','rotate('+tilt+' '+phalange.x+' '+phalange.y+')');
+		var splayMaxAngles = [45,25,-5,-30];
+		var digitLengths = [
+			[0.4,0.5,0.6,0.5],
+			[0.3,0.4,0.4,0.4],
+			[0.2,0.3,0.3,0.3],
+		];
+		var proximals = [];
+		var intermediates = [];
+		var distals = [];
+		for (var i=0;i<4;i++) {
+			var proximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			nearHand.appendChild(proximal);
+			var phalange = {
+				x: nearWrist.x - handWidth * 0.77 + handWidth*0.1 + i*handWidth*0.29,
+				y: nearWrist.y + handLength*0.8 + handLength*0.025*i,
+				length: handLength*digitLengths[0][i],
+				splay: splayMaxAngles[i] * Math.max(0,this.pos('nearHandSplay')/Math.PI),
+			};
+			proximals.push(phalange);
+			proximal.setAttribute('x',phalange.x);
+			proximal.setAttribute('y',phalange.y);
+			proximal.setAttribute('height',phalange.length);
+			proximal.setAttribute('width',handWidth*0.20);
+			proximal.setAttribute('rx',handWidth*0.25);
+			proximal.setAttribute('ry',handLength*0.15);
+			proximal.setAttribute('transform','rotate('+phalange.splay+' '+phalange.x+' '+phalange.y+')');
+			var intermediate = {
+				x:phalange.x - Math.sin(phalange.splay * Math.PI / 180) * phalange.length*0.8,
+				y:phalange.y + Math.cos(phalange.splay * Math.PI / 180) * phalange.length*0.8,
+				splay: phalange.splay,
+			};
+			intermediates.push(intermediate);
+		};
+		for (var i in intermediates) {
+			var intermediate = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			nearHand.appendChild(intermediate);
+			var phalange = {
+				x: intermediates[i].x,
+				y: intermediates[i].y,
+				length: handLength*digitLengths[1][i],
+				splay: intermediates[i].splay,
+			};
+			intermediate.setAttribute('x',phalange.x);
+			intermediate.setAttribute('y',phalange.y);
+			intermediate.setAttribute('height',phalange.length);
+			intermediate.setAttribute('width',handWidth*0.18);
+			intermediate.setAttribute('rx',handWidth*0.25);
+			intermediate.setAttribute('ry',handLength*0.15);
+			intermediate.setAttribute('transform','rotate('+phalange.splay+' '+phalange.x+' '+phalange.y+')');
+			var distal = {
+				x:proximals[i].x - Math.sin(phalange.splay * Math.PI / 180) * (proximals[i].length*0.8 + phalange.length*0.8),
+				y:proximals[i].y + Math.cos(phalange.splay * Math.PI / 180) * (proximals[i].length*0.8 + phalange.length*0.8),
+				splay: phalange.splay,
+			};
+			distals.push(distal);
+		}
+		for (var i in distals) {
+			var distal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			nearHand.appendChild(distal);
+			var phalange = {
+				x: distals[i].x,
+				y: distals[i].y,
+				length: handLength*digitLengths[2][i],
+				splay: distals[i].splay,
+			};
+			distal.setAttribute('x',phalange.x);
+			distal.setAttribute('y',phalange.y);
+			distal.setAttribute('height',phalange.length);
+			distal.setAttribute('width',handWidth*0.15);
+			distal.setAttribute('rx',handWidth*0.25);
+			distal.setAttribute('ry',handLength*0.15);
+			distal.setAttribute('transform','rotate('+phalange.splay+' '+phalange.x+' '+phalange.y+')');
+		}
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		nearHand.appendChild(circle);
+		circle.setAttribute('stroke','none');
+		circle.setAttribute('cx',nearWrist.x);
+		circle.setAttribute('cy',nearWrist.y);
+		circle.setAttribute('r',handWidth*0.33);
+
+		var farHand = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farHand.id = 'farHand';
+		farHand.setAttribute('fill',skinTone);
+		farHand.setAttribute('stroke','inherit');
+
 
 		var farElbowJoint = document.createElementNS('http://www.w3.org/2000/svg','use');
 		farElbowJoint.id = 'farElbowJoint';
@@ -1972,7 +2149,7 @@ function GamenBody() {
 		x = genitalsTop.x-genitalsFacing*hipsWidth*0.5;
 		y = genitalsTop.y;
  		c2x = x;
-		c2y = y;
+		c2y = y + genitalsBottom.y - genitalsTop.y;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		nearScrotum.setAttribute('d',d);
 				
@@ -2987,9 +3164,9 @@ function GamenBody() {
 		};
 		
 		if (upperBodyAngle) {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,farHand]);
 		} else {
-			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm,nearHand]);
 		};
 		
 		torso.appendChild(belly);
@@ -3016,9 +3193,9 @@ function GamenBody() {
 		bodyParts = bodyParts.concat([headGroup,hair]);
 		
 		if (upperBodyAngle) {
-			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
+			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm,nearHand]);
 		} else {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,farHand]);
 		};
 		
 		if (bigBelly  && upperBodyAngle) {
@@ -3117,10 +3294,10 @@ function GamenBody() {
 		shots.appendChild(moneyShot);
 		var handShot = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		handShot.id = 'handShot';
-		handShot.setAttribute('x',nearWrist.x - 100);
-		handShot.setAttribute('y',nearWrist.y - 100);
-		handShot.setAttribute('width',200);
-		handShot.setAttribute('height',200);
+		handShot.setAttribute('x',nearWrist.x - 50);
+		handShot.setAttribute('y',nearWrist.y - 50);
+		handShot.setAttribute('width',100);
+		handShot.setAttribute('height',100);
 		handShot.setAttribute('fill','none');
 		shots.appendChild(handShot);
 					
@@ -3130,7 +3307,7 @@ function GamenBody() {
 
 
 function GamenGarment() {
-	this.type = ['top','bottom','hat','shoe','glove'][Math.random() * 5 << 0];
+	this.type = ['top','bottom','hat','shoeLeft', 'shoeRight', 'gloveLeft', 'gloveRight'][Math.random() * 5 << 0];
 	this.collarHeight = Math.random(); // used for bottom waist
 	this.sleveHeight = Math.random(); // used for bottom cuffs
 	this.sleveFlare = Math.random();
