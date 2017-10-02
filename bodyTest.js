@@ -1602,6 +1602,52 @@ function MorfologyBody(id) {
 		thumbDistal.setAttribute('ry',handLength*0.5);
 		var tilt = 20 - 90*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
 		thumbDistal.setAttribute('transform','rotate('+(tilt*nearHandTurnDX)+' '+phalange.x+' '+phalange.y+')');
+		thumbNailWidth = handWidth * 0.17 * nearHandTurnDX/0.85;
+		var thumbNail = document.createElementNS('http://www.w3.org/2000/svg','path');
+		if (nearHandTurnDX > 0) {
+			nearThumb.appendChild(thumbNail);
+		} else {
+			nearThumb.prepend(thumbNail);
+		};
+		thumbNail.setAttribute('fill',nailColor);
+		thumbNail.setAttribute('stroke','black');
+		thumbNail.setAttribute('stroke-width',0.5);
+		thumbNail.setAttribute('transform','rotate('+(tilt*nearHandTurnDX)+' '+phalange.x+' '+phalange.y+')');
+		x = phalange.x - handWidth * 0.1;
+		if (nearHandTurnDX < 0) {
+			x -= thumbNailWidth;
+		};
+		y = phalange.y + phalange.length*0.4;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x;
+		y = y + phalange.length*0.3;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y +  phalange.length * 0.2 * this.bio('nailsLength');
+		x = x + thumbNailWidth;
+		y = y ;
+		c2x = x;
+		c2y = y + phalange.length * 0.2 * this.bio('nailsLength');;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x;
+		y = y - phalange.length*0.3;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x - thumbNailWidth;
+		y = y;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		thumbNail.setAttribute('d',d);
 
 		var nearHandArray = [
 			document.createElementNS('http://www.w3.org/2000/svg','g'),
@@ -1693,7 +1739,7 @@ function MorfologyBody(id) {
 			distal.setAttribute('transform','rotate('+(phalange.splay+phalange.curl)+' '+phalange.x+' '+phalange.y+')');
 
 			var nail = document.createElementNS('http://www.w3.org/2000/svg','path');
-			if (nearHandTurnDX < 0 || this.pos('nearHandCurl') > Math.PI/2) {
+			if ((nearHandTurnDX < 0 && Math.abs(this.pos('nearHandCurl')) < Math.PI/3) || (nearHandTurnDX > 0 && Math.abs(this.pos('nearHandCurl')) > Math.PI/3) ) {
 				nearHandArray[i].prepend(nail);
 			} else {
 				nearHandArray[i].appendChild(nail);
