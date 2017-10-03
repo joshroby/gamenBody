@@ -221,9 +221,11 @@ var handlers = {
 	normalize: function(num) {
 		for (var i in model.body.biometrics) {
 			model.body.biometrics[i] = num;
+			document.getElementById(i+'Slider').value = num;
 		};
 		for (i in model.body.library.boring) {
 			model.body.pose[i] = model.body.library.boring[i];
+			document.getElementById(i+'Slider').value = model.body.library.boring[i];
 		};
 		handlers.draw();
 	},
@@ -371,23 +373,23 @@ function MorfologyBody(id) {
 			curve: 'bell',
 		},
 		
+		footLength: {
+			root: 1.05,
+			curve: 'bell',
+		},
+		
 		glansSize: {
 			root: 1.02,
 			curve: 'camel',
 		},
 		
-		handLength: {
-			root: 1.04,
+		hairCurl: {
+			root: 1.1,
 			curve: 'bell',
 		},
 		
-		handWidth: {
-			root: 1.04,
-			curve: 'bell',
-		},
-		
-		footLength: {
-			root: 1.05,
+		hairLength: {
+			root: 1.5,
 			curve: 'bell',
 		},
 		
@@ -398,6 +400,16 @@ function MorfologyBody(id) {
 		
 		hairlinePeak: {
 			root: 1.1,
+			curve: 'bell',
+		},
+		
+		handLength: {
+			root: 1.02,
+			curve: 'bell',
+		},
+		
+		handWidth: {
+			root: 1.04,
 			curve: 'bell',
 		},
 	
@@ -528,11 +540,11 @@ function MorfologyBody(id) {
 	};
 	
 	this.library = {
+		aghast: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-2.2165681500328,"farEyeOuterLid":-2.60054058547155,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-3.14159265358979,"farFootPoint":0.1118450477825812,"farForearmLift":-2.2165681500328,"farHandCurl":0.0655818620824478,"farHandSplay":0.488692190558412,"farHandTilt":3.12413936106985,"farHandTurn":3.12413936106985,"farKneeBend":0.06594040047696802,"farThighLift":0,"farUpperArmLift":0,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":1.32645023151569,"mouthPurse":0.715584993317675,"mouthSmile":-3.14159265358979,"mouthGrimace":-3.14159265358979,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-2.2165681500328,"nearEyeOuterLid":-2.54818070791172,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":0,"nearHandCurl":-0.453785605518526,"nearHandSplay":0.715584993317675,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.279252680319093,"phallusErection":0,"shouldersTip":0},
 		boring: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.383972435438752,"farHandCurl":0.0655818620824478,"farHandSplay":1.32645023151569,"farHandTilt":-0.890117918517108,"farHandTurn":3.12413936106985,"farKneeBend":0.06594040047696802,"farThighLift":0.15779390417624337,"farUpperArmLift":0.820304748437335,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":1.25663706143592,"nearHandCurl":0,"nearHandSplay":1.25663706143592,"nearHandTilt":1.48352986419518,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.663225115757845,"phallusErection":0,"shouldersTip":0},	
 		hello: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farHandCurl":0.383972435438753,"farHandSplay":2.14675497995303,"farHandTilt":3.12413936106985,"farHandTurn":-3.14159265358979,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandCurl":0,"nearHandSplay":1.37881010907552,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
 		fullBelly: {"eyePositionX":-0.855211333477221,"eyePositionY":-0.523598775598299,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.85004900711399,"farEyeLowerLid":-1.13446401379631,"farEyebrowArch":1.51843644923507,"farFootPoint":0.1118450477825812,"farForearmLift":-1.37881010907552,"farHandCurl":-0.453785605518526,"farHandSplay":2.47836753783195,"farHandTilt":-0.994837673636768,"farHandTurn":3.12413936106985,"farKneeBend":1.01229096615671,"farThighLift":-0.296705972839036,"farUpperArmLift":0.715584993317675,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.296705972839036,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-2.77507351067098,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":2.18166156499291,"nearFootPoint":-0.935868670139553,"nearForearmLift":-1.76278254451427,"nearHandCurl":0,"nearHandSplay":1.53588974175501,"nearHandTilt":-2.65290046303138,"nearHandTurn":-2.54818070791172,"nearKneeBend":0.628318530717959,"nearThighLift":-0.366519142918809,"nearUpperArmLift":-0.715584993317675,"phallusErection":0,"shouldersTip":0},
 		squat: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.09955742875643,"farEyeOuterLid":-1.09955742875643,"farEyeLowerLid":0.767944870877505,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.331612557878923,"farHandCurl":0.44010971185866105,"farHandSplay":2.68780704807127,"farHandTilt":-0.610865238198015,"farHandTurn":3.12413936106985,"farKneeBend":0,"farThighLift":0.715584993317675,"farUpperArmLift":0.925024503556995,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.279252680319093,"hipsCant":0,"mouthOpen":-1.27409035395586,"mouthPurse":1.20427718387609,"mouthSmile":1.48352986419518,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":1.0471975511966,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.436332312998582,"nearHandCurl":0.331612557878923,"nearHandSplay":1.76278254451427,"nearHandTilt":0.715584993317675,"nearHandTurn":3.12413936106985,"nearKneeBend":0.488692190558412,"nearThighLift":-0.715584993317675,"nearUpperArmLift":-0.942477796076938,"phallusErection":0,"shouldersTip":0},
-		bolero: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farHandCurl":-0.027700606841514493,"farHandSplay":1.20427718387609,"farHandTilt":-2.65290046303138,"farHandTurn":-3.14159265358979,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandCurl":0,"nearHandSplay":1.37881010907552,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
 	};
 
 
@@ -713,7 +725,7 @@ function MorfologyBody(id) {
 		
 			var skinRed = 255, skinGreen = 237, skinBlue = 220;
 			
-			var pigmentBlack = Math.max(1 - this.coloring.skinBlack,0.2);
+			var pigmentBlack = Math.max(1 - this.coloring.skinBlack,0.4);
 			var pigmentBrown = Math.min(pigmentBlack * (0.5 + (1-this.coloring.skinBrown)*2),0.9);
 			var pigmentPink = Math.min(pigmentBlack * (0.5 + (1-this.coloring.skinPink)*2),0.9);
 		
@@ -753,6 +765,10 @@ function MorfologyBody(id) {
 			var hairGreen = this.coloring.hairGreen * 255;
 			var hairBlue = this.coloring.hairBlue * 255;
 			var hairColor = "#" + ("0" + Math.round(hairRed).toString(16)).substr(-2) + ("0" + Math.round(hairGreen).toString(16)).substr(-2) + ("0" + Math.round(hairBlue).toString(16)).substr(-2);
+			hairRed *= 0.7;
+			hairGreen *= 0.7;
+			hairBlue *= 0.7;
+			var hairShadowColor = "#" + ("0" + Math.round(hairRed).toString(16)).substr(-2) + ("0" + Math.round(hairGreen).toString(16)).substr(-2) + ("0" + Math.round(hairBlue).toString(16)).substr(-2);
 
 			var nailRed = (255+skinRed)/2;
 			var nailGreen = (255+skinGreen)/2;
@@ -771,45 +787,7 @@ function MorfologyBody(id) {
 		
 	
 		var svg = document.createElementNS('http://www.w3.org/2000/svg','g');
-		
-		var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
-		svg.appendChild(defs);
-		
-// 		var filter =  document.createElementNS('http://www.w3.org/2000/svg','filter');
-// 		filter.id = 'noiseFilter';
-// 		defs.appendChild(filter);
-// 		var noiseFilter = document.createElementNS('http://www.w3.org/2000/svg','feTurbulence');
-// 		filter.appendChild(noiseFilter);
-// 		noiseFilter.setAttribute('result','noise');
-// 		noiseFilter.setAttribute('type','fractalNoise');
-// 		noiseFilter.setAttribute('baseFrequency',1);
-// 		var colorMatrix = document.createElementNS('http://www.w3.org/2000/svg','feColorMatrix');
-// 		filter.appendChild(colorMatrix);
-// 		colorMatrix.setAttribute('type','matrix');
-// 		colorMatrix.setAttribute('values','0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1.2 1.1');
-// 		var blackFill = document.createElementNS('http://www.w3.org/2000/svg','feFlood');
-// 		blackFill.setAttribute('flood-color','black');
-// 		blackFill.setAttribute('result','silhouette');
-// 		var composite = document.createElementNS('http://www.w3.org/2000/svg','feComposite');
-// 		filter.appendChild(composite);
-// 		composite.setAttribute('in','silhouette');
-// 		composite.setAttribute('in2','SourceGraphic');
-// 		composite.setAttribute('operator','in');
-		
-// 		var displacementMap = document.createElementNS('http://www.w3.org/2000/svg','feDisplacementMap');
-// 		filter.appendChild(displacementMap);
-// 		displacementMap.setAttribute('in','SourceGraphic');
-// 		displacementMap.setAttribute('in2','noise');
-// 		displacementMap.setAttribute('scale',9);
-				
-		var shadow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
-		svg.appendChild(shadow);
-		shadow.setAttribute('x',0);
-		shadow.setAttribute('y',0);
-		shadow.setAttribute('rx',100);
-		shadow.setAttribute('ry',20);
-		shadow.setAttribute('fill','lightgrey');
-				
+						
 		// Height Proportions
 		var headHeightProportion = this.bio('headHeight')*0.2;
 		var neckHeightProportion = this.bio('neckHeight')*0.03;
@@ -851,6 +829,9 @@ function MorfologyBody(id) {
 		var phallusGirth = this.bio('phallusGirth') * phallusLength * 0.15;
 		var glansSize = this.bio('glansSize') * phallusGirth;
 		var labioscrotalSize = this.bio('labioscrotalSize') * hipsWidth/4;
+		var handLength = this.bio('handLength')*30;
+		var handWidth = this.bio('handWidth') * handLength * 0.8;
+		var hairLength = this.bio('hairLength') * headHeight;
 				
 		// Orientation
 		var upperBodyAngle ;
@@ -885,6 +866,12 @@ function MorfologyBody(id) {
 		} else {
 			pelvisFacing = -1;
 		};
+		var nearHandTilt = this.pos('nearHandTilt') * -180/Math.PI;
+		var farHandTilt = this.pos('farHandTilt') * -180/Math.PI;	
+		var nearHandTurnDX = Math.sin(this.pos('nearHandTurn')/Math.PI);
+		var nearHandCurl = 0.5 * Math.abs(this.pos('nearHandCurl') * 180 / Math.PI) * -1;
+		var farHandTurnDX = Math.sin(this.pos('farHandTurn')/Math.PI);
+		var farHandCurl = -0.5 * Math.abs(this.pos('farHandCurl') * 180 / Math.PI) * -1;
 
 		// Joints and Points
 		var neckBase = {
@@ -1188,14 +1175,121 @@ function MorfologyBody(id) {
 		} else {
 			var buttSway = buttSize*0.5;
 		};
-
 		
+		var hairlineHeight = (this.biometrics.hairlineHeight+10)/20 * (headCenter.y - headHeight/2 - (farTemple.y + nearTemple.y)/2);
+		var hairlinePeak = this.bio('hairlinePeak')*5;
+		var nearScalpTemple = {
+			x: nearTemple.x,
+			y: headCenter.y-headHeight/2-hairlineHeight,
+		};
+		var farScalpTemple = {
+			x: farTemple.x,
+			y: headCenter.y-headHeight/2-hairlineHeight,
+		};
+		var scalpTop = {
+			x: headCenter.x-headWidth*0.1,
+			y: headCenter.y-headHeight*0.8,
+		};
+		
+		// Defs
+	
+		var defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+		svg.appendChild(defs);
+
+		var hairWavePattern =  document.createElementNS('http://www.w3.org/2000/svg','pattern');
+		hairWavePattern.id = 'hairWavePattern';
+		var curlX = 2;
+		var curlY = 10/this.bio('hairCurl');
+		defs.appendChild(hairWavePattern);
+		hairWavePattern.setAttribute('width',curlX*2);
+		hairWavePattern.setAttribute('height',curlY*2);
+		hairWavePattern.setAttribute('patternUnits','userSpaceOnUse');
+		var bg =  document.createElementNS('http://www.w3.org/2000/svg','rect');
+		bg.setAttribute('x',0);
+		bg.setAttribute('y',0);
+		bg.setAttribute('width',curlX*3);
+		bg.setAttribute('height',curlY*2);
+		bg.setAttribute('fill',hairColor);
+		hairWavePattern.appendChild(bg);
+		var curl =  document.createElementNS('http://www.w3.org/2000/svg','path');
+		curl.setAttribute('fill',hairShadowColor);
+		var d = 'M '+curlX*0.5+',0 ';
+		d += 'c '+(0.5*curlX)+',0 '+(0.5*curlX)+','+curlY+' 0,'+curlY+' ';
+		d += 'c -'+(0.5*curlX)+',0 -'+(0.5*curlX)+','+curlY+' 0,'+curlY+' ';
+		d += 'h'+curlX+' ';
+		d += 'c -'+(0.5*curlX)+',0 -'+(0.5*curlX)+',-'+curlY+' 0,-'+curlY+' ';
+		d += 'c '+(0.5*curlX)+',0 '+(0.5*curlX)+',-'+curlY+' 0,-'+curlY+' ';
+		d += 'z';
+		curl.setAttribute('d',d);
+		hairWavePattern.appendChild(curl);
+		
+		var hairCurlFilter =  document.createElementNS('http://www.w3.org/2000/svg','filter');
+		hairCurlFilter.id = 'hairCurl_'+this.id;
+		defs.appendChild(hairCurlFilter);
+		var noiseFilter = document.createElementNS('http://www.w3.org/2000/svg','feTurbulence');
+		hairCurlFilter.appendChild(noiseFilter);
+		noiseFilter.setAttribute('result','noise');
+		noiseFilter.setAttribute('type','fractalNoise');
+		noiseFilter.setAttribute('baseFrequency',1/this.bio('hairCurl'));
+		var displacementMap = document.createElementNS('http://www.w3.org/2000/svg','feDisplacementMap');
+		hairCurlFilter.appendChild(displacementMap);
+		displacementMap.setAttribute('in','SourceGraphic');
+		displacementMap.setAttribute('in2','noise');
+		displacementMap.setAttribute('scale',9);
+
+// 		var colorMatrix = document.createElementNS('http://www.w3.org/2000/svg','feColorMatrix');
+// 		filter.appendChild(colorMatrix);
+// 		colorMatrix.setAttribute('type','matrix');
+// 		colorMatrix.setAttribute('values','0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1.2 1.1');
+// 		var blackFill = document.createElementNS('http://www.w3.org/2000/svg','feFlood');
+// 		blackFill.setAttribute('flood-color','black');
+// 		blackFill.setAttribute('result','silhouette');
+// 		var composite = document.createElementNS('http://www.w3.org/2000/svg','feComposite');
+// 		filter.appendChild(composite);
+// 		composite.setAttribute('in','silhouette');
+// 		composite.setAttribute('in2','SourceGraphic');
+// 		composite.setAttribute('operator','in');
+				
+		var shadow = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+		svg.appendChild(shadow);
+		shadow.setAttribute('x',0);
+		shadow.setAttribute('y',0);
+		shadow.setAttribute('rx',100);
+		shadow.setAttribute('ry',20);
+		shadow.setAttribute('fill','lightgrey');
+				
 		// Shapes
 		
 		var hairBack = document.createElementNS('http://www.w3.org/2000/svg','g');
 		hairBack.id = 'hairBack_'+this.id;
-		hairBack.setAttribute('fill',hairColor);
-		hairBack.setAttribute('transform','translate('+headSlide+',0) rotate('+headTilt+','+headCenter.x+','+headCenter.y+')');
+		var hairFill = document.createElementNS('http://www.w3.org/2000/svg','path');
+		hairFill.setAttribute('fill','url(#hairWavePattern)');
+		hairFill.setAttribute('stroke','none');
+		x = nearEarCenter.x + headSlide;
+		y = nearEarCenter.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x - hairLength*0.1;
+		c1y = y + Math.min(hairLength,totalHeight)*0.8;
+		x = (nearEarCenter.x + farEarCenter.x)/2 + headSlide;
+		y = Math.min(0,hairLength + (nearEarCenter.y + farEarCenter.y)/2);
+		c2x = x - hairLength*0.2;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + hairLength*0.2;
+		c1y = y;
+		x = farEarCenter.x + headSlide;
+		y = farEarCenter.y;
+		c2x = x + hairLength*0.1;
+		c2y = y + Math.min(hairLength,totalHeight)*0.8;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		hairFill.setAttribute('d',d);
+		hairFill.setAttribute('filter','url(#hairCurl_'+this.id+')');
+		var hairStroke = document.createElementNS('http://www.w3.org/2000/svg','path');
+		hairStroke.setAttribute('d',d);
+		hairStroke.setAttribute('fill','none');
+		hairBack.appendChild(hairFill);
+		hairBack.appendChild(hairStroke);
+		
 		
 		var butt = document.createElementNS('http://www.w3.org/2000/svg','g');
 		butt.id = 'butt_'+this.id;
@@ -1318,9 +1412,9 @@ function MorfologyBody(id) {
 			var hipBlock = document.createElementNS('http://www.w3.org/2000/svg','circle');
 			farThigh.appendChild(hipBlock);
 			hipBlock.setAttribute('stroke','none');
-			hipBlock.setAttribute('cx',farHip.x-thighWidth*0.1);
+			hipBlock.setAttribute('cx',farHip.x+thighWidth*0.1);
 			hipBlock.setAttribute('cy',farHip.y-thighWidth*0.2);
-			hipBlock.setAttribute('r',thighWidth * 0.25);
+			hipBlock.setAttribute('r',thighWidth * 0.34);
 		} else {
 			farThigh.appendChild(farButtock);
 		};
@@ -1365,9 +1459,9 @@ function MorfologyBody(id) {
 			var hipBlock = document.createElementNS('http://www.w3.org/2000/svg','circle');
 			nearThigh.appendChild(hipBlock);
 			hipBlock.setAttribute('stroke','none');
-			hipBlock.setAttribute('cx',nearHip.x+thighWidth*0.1);
+			hipBlock.setAttribute('cx',nearHip.x-thighWidth*0.1);
 			hipBlock.setAttribute('cy',nearHip.y-thighWidth*0.2);
-			hipBlock.setAttribute('r',thighWidth * 0.25);
+			hipBlock.setAttribute('r',thighWidth * 0.34);
 		} else {
 			nearThigh.appendChild(nearButtock);			
 		};
@@ -1475,11 +1569,6 @@ function MorfologyBody(id) {
 		tilt = this.pos('nearUpperArmLift') * -180/Math.PI;
 		bicep.setAttribute('transform','rotate('+tilt+' '+nearShoulder.x+' '+nearShoulder.y+')');		
 
-		var handLength = this.bio('handLength')*30;
-		var handWidth = this.bio('handWidth') * handLength * 0.8;
-		var nearHandTilt = this.pos('nearHandTilt') * -180/Math.PI;
-		var farHandTilt = this.pos('farHandTilt') * -180/Math.PI;
-		
 		var farLowerArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farLowerArm.id = 'farLowerArm_'+this.id;
 		farLowerArm.setAttribute('fill',skinTone);
@@ -1534,11 +1623,6 @@ function MorfologyBody(id) {
 		circle.setAttribute('cy',nearWrist.y);
 		circle.setAttribute('r',handWidth*0.25);
 		
-		var nearHandTurnDX = Math.sin(this.pos('nearHandTurn')/Math.PI);
-		var nearHandCurl = 0.5 * Math.abs(this.pos('nearHandCurl') * 180 / Math.PI) * -1;
-		var farHandTurnDX = Math.sin(this.pos('farHandTurn')/Math.PI);
-		var farHandCurl = -0.5 * Math.abs(this.pos('farHandCurl') * 180 / Math.PI) * -1;
-
 		var nearHand = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearHand.id = 'nearHand_'+this.id;
 		nearHand.setAttribute('fill',skinTone);
@@ -3550,25 +3634,11 @@ function MorfologyBody(id) {
 // 		d = 'M '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3)+' ';
 // 		d += 'C '+(headCenter.x+headWidth/2)+','+(headCenter.y + headHeight/3+farFacing)+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3+nearFacing)+' '+' '+(headCenter.x-headWidth/2)+','+(headCenter.y + headHeight/3);
 // 		mouthGuide.setAttribute('d',d);
-
-		var hairlineHeight = (this.biometrics.hairlineHeight+10)/20 * (headCenter.y - headHeight/2 - (farTemple.y + nearTemple.y)/2);
-		var hairlinePeak = this.bio('hairlinePeak')*5;
-		var nearScalpTemple = {
-			x: nearTemple.x,
-			y: headCenter.y-headHeight/2-hairlineHeight,
-		};
-		var farScalpTemple = {
-			x: farTemple.x,
-			y: headCenter.y-headHeight/2-hairlineHeight,
-		};
-		var scalpTop = {
-			x: headCenter.x-headWidth*0.1,
-			y: headCenter.y-headHeight*0.8,
-		};
 				
 		var scalp = document.createElementNS('http://www.w3.org/2000/svg','g');
 		headGroup.appendChild(scalp);
 		scalp.setAttribute('fill',hairColor);
+// 		scalp.setAttribute('filter','url(#hairCurl_'+this.id+')');
 		var scalpHairline = document.createElementNS('http://www.w3.org/2000/svg','path');
 		scalp.appendChild(scalpHairline);
 		x = scalpTop.x;
