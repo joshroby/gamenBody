@@ -49,6 +49,12 @@ var model = {
 		handShotBtn.setAttribute('onclick','handlers.toggleShot("hand")');
 		buttonsDiv.appendChild(handShotBtn);
 		
+		var handShotBtn = document.createElement('button');
+		handShotBtn.id = 'handShotBtn';
+		handShotBtn.innerHTML = 'Hand Shot 2';
+		handShotBtn.setAttribute('onclick','handlers.toggleShot("hand2")');
+		buttonsDiv.appendChild(handShotBtn);
+		
 		buttonsDiv.appendChild(document.createElement('br'));
 		
 		var jiggleBtn = document.createElement('button');
@@ -62,6 +68,38 @@ var model = {
 		animateBtn.innerHTML = 'Animate';
 		animateBtn.setAttribute('onclick','handlers.animate()');
 		buttonsDiv.appendChild(animateBtn);
+		
+		buttonsDiv.appendChild(document.createElement('br'));
+		
+		var normalizeBtn = document.createElement('button');
+		normalizeBtn.id = 'normalizeBtn';
+		normalizeBtn.innerHTML = '-10s';
+		normalizeBtn.setAttribute('onclick','handlers.normalize(-10)');
+		buttonsDiv.appendChild(normalizeBtn);
+		
+		var normalizeBtn = document.createElement('button');
+		normalizeBtn.id = 'normalizeBtn';
+		normalizeBtn.innerHTML = '-5s';
+		normalizeBtn.setAttribute('onclick','handlers.normalize(-5)');
+		buttonsDiv.appendChild(normalizeBtn);
+		
+		var normalizeBtn = document.createElement('button');
+		normalizeBtn.id = 'normalizeBtn';
+		normalizeBtn.innerHTML = '0s';
+		normalizeBtn.setAttribute('onclick','handlers.normalize(0)');
+		buttonsDiv.appendChild(normalizeBtn);
+		
+		var normalizeBtn = document.createElement('button');
+		normalizeBtn.id = 'normalizeBtn';
+		normalizeBtn.innerHTML = '5s';
+		normalizeBtn.setAttribute('onclick','handlers.normalize(5)');
+		buttonsDiv.appendChild(normalizeBtn);
+		
+		var normalizeBtn = document.createElement('button');
+		normalizeBtn.id = 'normalizeBtn';
+		normalizeBtn.innerHTML = '10s';
+		normalizeBtn.setAttribute('onclick','handlers.normalize(10)');
+		buttonsDiv.appendChild(normalizeBtn);
 		
 		var ticklist = document.createElement('datalist');
 		ticklist.id = 'ticklist';
@@ -163,21 +201,6 @@ var handlers = {
 	toggleShot: function(shot) {
 		model.options.shot = shot;
 		handlers.draw();
-// 		var toggleShotBtn = document.getElementById('toggleShotBtn');
-// 		if (model.options.shot == 'fullBody') {
-// 			model.options.shot = 'head'
-// 			toggleShotBtn.innerHTML = "Money Shot";
-// 		} else if (model.options.shot == 'head') {
-// 			model.options.shot = 'money'
-// 			toggleShotBtn.innerHTML = "Hand Shot";
-// 		} else if (model.options.shot == 'money') {
-// 			model.options.shot = 'hand'
-// 			toggleShotBtn.innerHTML = "Full Body Shot";
-// 		} else {
-// 			model.options.shot = 'fullBody'
-// 			toggleShotBtn.innerHTML = "Head Shot";
-// 		};
-// 		handlers.draw();
 	},
 	
 	updatePose: function(poseKey) {
@@ -192,6 +215,16 @@ var handlers = {
 	
 	updateColor: function(bioKey) {
 		model.body.coloring[bioKey] = parseFloat(document.getElementById(bioKey + "Slider").value);
+		handlers.draw();
+	},
+	
+	normalize: function(num) {
+		for (var i in model.body.biometrics) {
+			model.body.biometrics[i] = num;
+		};
+		for (i in model.body.library.boring) {
+			model.body.pose[i] = model.body.library.boring[i];
+		};
 		handlers.draw();
 	},
 	
@@ -404,7 +437,7 @@ function MorfologyBody(id) {
 		},
 	
 		nailsLength: {
-			root: 1.2,
+			root: 1.4,
 			curve: 'bell',
 		},
 	
@@ -495,11 +528,11 @@ function MorfologyBody(id) {
 	};
 	
 	this.library = {
-		boring: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.11419126845867289,"farHandCurl":0.0655818620824478,"farHandSplay":0.10118461055082913,"farHandTilt":-0.40256087721995143,"farHandTurn":0.14626385910159803,"farKneeBend":0.06594040047696802,"farThighLift":0.15779390417624337,"farUpperArmLift":0.715584993317675,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":1.25663706143592,"nearHandCurl":0,"nearHandSplay":1.25663706143592,"nearHandTilt":1.48352986419518,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.663225115757845,"phallusErection":0,"shouldersTip":0},	
-		hello: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.296705972839036,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.94960643587042,"farFootPoint":0.1118450477825812,"farForearmLift":-2.84488668075076,"farHandCurl":-0.29040376058466427,"farHandSplay":0.009396107075860137,"farHandTilt":0.09328098961769118,"farHandTurn":-0.061780910430748924,"farKneeBend":-0.418879020478639,"farThighLift":0.418879020478639,"farUpperArmLift":2.12930168743308,"headNod":-0.010291833989164266,"headSlide":0.802851455917392,"headTip":0.366519142918809,"hipsCant":-0.296705972839036,"mouthOpen":-1.67551608191456,"mouthPurse":0.680678408277789,"mouthSmile":3.12413936106985,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.820304748437335,"nearHandCurl":0.383972435438753,"nearHandSplay":1.37881010907552,"nearHandTilt":0.383972435438753,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-1.22173047639603,"phallusErection":2.460914245312,"shouldersTip":0.296705972839036},
-		run: {"eyePositionX":-0.855211333477221,"eyePositionY":-0.523598775598299,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.85004900711399,"farEyeLowerLid":-1.13446401379631,"farEyebrowArch":1.51843644923507,"farFootPoint":0.1118450477825812,"farForearmLift":-1.01229096615671,"farHandCurl":-1.4766415980389818,"farHandSplay":0.02469722176800771,"farHandTilt":-0.5309620621151827,"farHandTurn":-0.1162008825642989,"farKneeBend":1.01229096615671,"farThighLift":-0.296705972839036,"farUpperArmLift":0.628318530717959,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.296705972839036,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-2.77507351067098,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":2.18166156499291,"nearFootPoint":-0.935868670139553,"nearForearmLift":-1.76278254451427,"nearHandCurl":0,"nearHandSplay":1.53588974175501,"nearHandTilt":-2.65290046303138,"nearHandTurn":-2.54818070791172,"nearKneeBend":0.628318530717959,"nearThighLift":-0.366519142918809,"nearUpperArmLift":-0.715584993317675,"phallusErection":0,"shouldersTip":0},
-		squat: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.09955742875643,"farEyeOuterLid":-1.09955742875643,"farEyeLowerLid":0.767944870877505,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.715584993317675,"farHandCurl":0.44010971185866105,"farHandSplay":-0.9908390059614732,"farHandTilt":0.32591818261079125,"farHandTurn":-0.8215668894509894,"farKneeBend":0,"farThighLift":0.715584993317675,"farUpperArmLift":0.820304748437335,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.279252680319093,"hipsCant":0,"mouthOpen":-1.27409035395586,"mouthPurse":1.20427718387609,"mouthSmile":1.48352986419518,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":1.0471975511966,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.436332312998582,"nearHandCurl":0.331612557878923,"nearHandSplay":1.76278254451427,"nearHandTilt":0.715584993317675,"nearHandTurn":3.12413936106985,"nearKneeBend":0.488692190558412,"nearThighLift":-0.715584993317675,"nearUpperArmLift":-0.942477796076938,"phallusErection":0,"shouldersTip":0},
-		bolero: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farHandCurl":-0.027700606841514493,"farHandSplay":0.08773495650151746,"farHandTilt":0.10315013504130856,"farHandTurn":-0.5834106692657511,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandCurl":0,"nearHandSplay":1.37881010907552,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
+		boring: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.67551608191456,"farEyeLowerLid":-1.51843644923507,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.383972435438752,"farHandCurl":0.0655818620824478,"farHandSplay":1.32645023151569,"farHandTilt":-0.890117918517108,"farHandTurn":3.12413936106985,"farKneeBend":0.06594040047696802,"farThighLift":0.15779390417624337,"farUpperArmLift":0.820304748437335,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":1.25663706143592,"nearHandCurl":0,"nearHandSplay":1.25663706143592,"nearHandTilt":1.48352986419518,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":-0.0025310759346229414,"nearUpperArmLift":-0.663225115757845,"phallusErection":0,"shouldersTip":0},	
+		hello: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farHandCurl":0.383972435438753,"farHandSplay":2.14675497995303,"farHandTilt":3.12413936106985,"farHandTurn":-3.14159265358979,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandCurl":0,"nearHandSplay":1.37881010907552,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
+		fullBelly: {"eyePositionX":-0.855211333477221,"eyePositionY":-0.523598775598299,"farEyeInnerLid":-1.23918376891597,"farEyeOuterLid":-1.85004900711399,"farEyeLowerLid":-1.13446401379631,"farEyebrowArch":1.51843644923507,"farFootPoint":0.1118450477825812,"farForearmLift":-1.37881010907552,"farHandCurl":-0.453785605518526,"farHandSplay":2.47836753783195,"farHandTilt":-0.994837673636768,"farHandTurn":3.12413936106985,"farKneeBend":1.01229096615671,"farThighLift":-0.296705972839036,"farUpperArmLift":0.715584993317675,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.296705972839036,"hipsCant":0,"mouthOpen":-3.14159265358979,"mouthPurse":-2.77507351067098,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":2.18166156499291,"nearFootPoint":-0.935868670139553,"nearForearmLift":-1.76278254451427,"nearHandCurl":0,"nearHandSplay":1.53588974175501,"nearHandTilt":-2.65290046303138,"nearHandTurn":-2.54818070791172,"nearKneeBend":0.628318530717959,"nearThighLift":-0.366519142918809,"nearUpperArmLift":-0.715584993317675,"phallusErection":0,"shouldersTip":0},
+		squat: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":-1.09955742875643,"farEyeOuterLid":-1.09955742875643,"farEyeLowerLid":0.767944870877505,"farEyebrowArch":-2.3100829131163207,"farFootPoint":0.1118450477825812,"farForearmLift":-0.331612557878923,"farHandCurl":0.44010971185866105,"farHandSplay":2.68780704807127,"farHandTilt":-0.610865238198015,"farHandTurn":3.12413936106985,"farKneeBend":0,"farThighLift":0.715584993317675,"farUpperArmLift":0.925024503556995,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":-0.279252680319093,"hipsCant":0,"mouthOpen":-1.27409035395586,"mouthPurse":1.20427718387609,"mouthSmile":1.48352986419518,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":1.0471975511966,"nearEyebrowArch":-1.95476876223365,"nearFootPoint":-0.935868670139553,"nearForearmLift":0.436332312998582,"nearHandCurl":0.331612557878923,"nearHandSplay":1.76278254451427,"nearHandTilt":0.715584993317675,"nearHandTurn":3.12413936106985,"nearKneeBend":0.488692190558412,"nearThighLift":-0.715584993317675,"nearUpperArmLift":-0.942477796076938,"phallusErection":0,"shouldersTip":0},
+		bolero: {"eyePositionX":-0.471238898038469,"eyePositionY":-0.06458649531074478,"farEyeInnerLid":0,"farEyeOuterLid":0,"farEyeLowerLid":0,"farEyebrowArch":-0.279252680319093,"farFootPoint":-3.14159265358979,"farForearmLift":-2.75762021815104,"farHandCurl":-0.027700606841514493,"farHandSplay":1.20427718387609,"farHandTilt":-2.65290046303138,"farHandTurn":-3.14159265358979,"farKneeBend":-1.1693705988362,"farThighLift":1.15191730631626,"farUpperArmLift":2.80998009571087,"headNod":-0.010291833989164266,"headSlide":-0.24405169224369802,"headTip":0,"hipsCant":0,"mouthOpen":-1.76278254451427,"mouthPurse":-0.575958653158129,"mouthSmile":1.13446401379631,"mouthGrimace":0.006025301391573963,"mouthSmirk":-0.11785831040371379,"nearEyeInnerLid":-1.18682389135614,"nearEyeOuterLid":-1.85004900711399,"nearEyeLowerLid":-1.79768912955416,"nearEyebrowArch":-3.14159265358979,"nearFootPoint":-0.935868670139553,"nearForearmLift":-0.331612557878923,"nearHandCurl":0,"nearHandSplay":1.37881010907552,"nearHandTilt":0,"nearHandTurn":3.12413936106985,"nearKneeBend":-0.0035190247333446775,"nearThighLift":0.331612557878923,"nearUpperArmLift":-1.1693705988362,"phallusErection":0,"shouldersTip":0},
 	};
 
 
@@ -661,6 +694,10 @@ function MorfologyBody(id) {
 		} else if (shot == 'hand') {
 			handShot = svg.getElementById('handShot');
 			viewBoxString = handShot.getAttribute('x') + ' ' + handShot.getAttribute('y') + ' ' + handShot.getAttribute('width') + ' ' + handShot.getAttribute('height');
+			svg.setAttribute('viewBox',viewBoxString);
+		} else if (shot == 'hand2') {
+			hand2Shot = svg.getElementById('hand2Shot');
+			viewBoxString = hand2Shot.getAttribute('x') + ' ' + hand2Shot.getAttribute('y') + ' ' + hand2Shot.getAttribute('width') + ' ' + hand2Shot.getAttribute('height');
 			svg.setAttribute('viewBox',viewBoxString);
 		};
 		
@@ -1441,6 +1478,7 @@ function MorfologyBody(id) {
 		var handLength = this.bio('handLength')*30;
 		var handWidth = this.bio('handWidth') * handLength * 0.8;
 		var nearHandTilt = this.pos('nearHandTilt') * -180/Math.PI;
+		var farHandTilt = this.pos('farHandTilt') * -180/Math.PI;
 		
 		var farLowerArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farLowerArm.id = 'farLowerArm_'+this.id;
@@ -1456,7 +1494,7 @@ function MorfologyBody(id) {
 		farLowerArm.appendChild(rect);
 		rect.setAttribute('x',(farElbow.x+farWrist.x)/2-this.bio('armWidth') * 10);
 		rect.setAttribute('y',(farElbow.y+farWrist.y)/2-forearmLength/1.8);
-		rect.setAttribute('height',forearmLength * 1);
+		rect.setAttribute('height',forearmLength * 1.1);
 		rect.setAttribute('width',this.bio('armWidth') * 20);
 		rect.setAttribute('rx',this.bio('armWidth') * 20);
 		rect.setAttribute('ry',forearmLength);
@@ -1467,7 +1505,7 @@ function MorfologyBody(id) {
 // 		circle.setAttribute('stroke','none');
 		circle.setAttribute('cx',farWrist.x);
 		circle.setAttribute('cy',farWrist.y);
-		circle.setAttribute('r',handWidth*0.33);
+		circle.setAttribute('r',handWidth*0.25);
 
 		var nearLowerArm = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearLowerArm.id = 'nearLowerArm_'+this.id;
@@ -1498,7 +1536,8 @@ function MorfologyBody(id) {
 		
 		var nearHandTurnDX = Math.sin(this.pos('nearHandTurn')/Math.PI);
 		var nearHandCurl = 0.5 * Math.abs(this.pos('nearHandCurl') * 180 / Math.PI) * -1;
-		var nearNailRoll = Math.abs(this.pos('nearHandCurl'));
+		var farHandTurnDX = Math.sin(this.pos('farHandTurn')/Math.PI);
+		var farHandCurl = -0.5 * Math.abs(this.pos('farHandCurl') * 180 / Math.PI) * -1;
 
 		var nearHand = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearHand.id = 'nearHand_'+this.id;
@@ -1574,7 +1613,7 @@ function MorfologyBody(id) {
 		nearThumb.setAttribute('transform','rotate('+nearHandTilt+' '+nearWrist.x+' '+nearWrist.y+')');
 		var nearThumbProximal = {
 			x: nearWrist.x+handWidth*0.3*nearHandTurnDX,
-			y: nearWrist.y+handLength*0.2,
+			y: nearWrist.y+handLength*0,
 			length: handLength*0.7,
 		};
 		var thumbProximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -1587,6 +1626,19 @@ function MorfologyBody(id) {
 		thumbProximal.setAttribute('ry',handLength*0.5);
 		var tilt = -15 - 60*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
 		thumbProximal.setAttribute('transform','rotate('+(tilt*nearHandTurnDX)+' '+nearThumbProximal.x+' '+nearThumbProximal.y+')');
+		var thumbJoint = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		nearThumb.appendChild(thumbJoint);
+		var thumbJointOffset = this.pos('nearHandTurn') * -1;
+		thumbJoint.id = 'thumbJoint';
+		thumbJoint.setAttribute('x',nearThumbProximal.x-handWidth*0.15+thumbJointOffset);
+		thumbJoint.setAttribute('y',nearThumbProximal.y - handLength * 0.1);
+		thumbJoint.setAttribute('height',nearThumbProximal.length*0.7);
+		thumbJoint.setAttribute('width',handWidth*0.3);
+		thumbJoint.setAttribute('rx',handWidth*0.1);
+		thumbJoint.setAttribute('ry',handLength*0.5);
+		thumbJoint.setAttribute('stroke','none');
+		var tilt = -15 - 60*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
+		thumbJoint.setAttribute('transform','rotate('+(tilt*nearHandTurnDX)+' '+nearThumbProximal.x+' '+nearThumbProximal.y+')');
 		var thumbDistal = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		nearThumb.appendChild(thumbDistal);
 		phalange = {
@@ -1621,21 +1673,21 @@ function MorfologyBody(id) {
 		d = 'M '+x+','+y+' ';
 		c1x = x;
 		c1y = y;
-		x = x;
+		x = x - thumbNailWidth * 0.05;
 		y = y + phalange.length*0.3;
 		c2x = x;
 		c2y = y;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		c1x = x;
 		c1y = y +  phalange.length * 0.2 * this.bio('nailsLength');
-		x = x + thumbNailWidth;
+		x = x + thumbNailWidth * 1.1;
 		y = y ;
 		c2x = x;
 		c2y = y + phalange.length * 0.2 * this.bio('nailsLength');;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		c1x = x;
 		c1y = y;
-		x = x;
+		x = x - thumbNailWidth * 0.05;
 		y = y - phalange.length*0.3;
 		c2x = x;
 		c2y = y;
@@ -1648,7 +1700,6 @@ function MorfologyBody(id) {
 		c2y = y;
 		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
 		thumbNail.setAttribute('d',d);
-
 		var nearHandArray = [
 			document.createElementNS('http://www.w3.org/2000/svg','g'),
 			document.createElementNS('http://www.w3.org/2000/svg','g'),
@@ -1785,11 +1836,10 @@ function MorfologyBody(id) {
 		var palmFacing = this.pos('nearHandTurn') < 0 && Math.abs(this.pos('nearHandCurl')) > Math.PI/3;
 		if (palmFacing) {
 			nearHandArray.unshift(nearHand);
-			nearHandArray.unshift(nearThumb);
 		} else {
-			nearHandArray.push(nearThumb);
 			nearHandArray.push(nearHand);
 		};
+		nearHandArray.push(nearThumb);
 		var nearJointCovers = document.createElementNS('http://www.w3.org/2000/svg','g');
 		nearHandArray.push(nearJointCovers);
 		nearJointCovers.setAttribute('transform','rotate('+nearHandTilt+' '+nearWrist.x+' '+nearWrist.y+')');
@@ -1808,24 +1858,323 @@ function MorfologyBody(id) {
 				nearJointCovers.appendChild(proximal);
 			};
 		};
-		var thumbProximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
-		nearJointCovers.appendChild(thumbProximal);
-		thumbProximal.setAttribute('fill',skinTone);
-		thumbProximal.setAttribute('stroke','none');
-		thumbProximal.setAttribute('x',nearThumbProximal.x-handWidth*0.15);
-		thumbProximal.setAttribute('y',nearThumbProximal.y);
-		thumbProximal.setAttribute('height',nearThumbProximal.length);
-		thumbProximal.setAttribute('width',handWidth*0.3);
-		thumbProximal.setAttribute('rx',handWidth*0.1);
-		thumbProximal.setAttribute('ry',handLength*0.5);
-		var tilt = -15 - 60*Math.max(0,this.pos('nearHandSplay'))/Math.PI;
-		thumbProximal.setAttribute('transform','rotate('+(tilt*nearHandTurnDX)+' '+nearThumbProximal.x+' '+nearThumbProximal.y+')');
 
 		var farHand = document.createElementNS('http://www.w3.org/2000/svg','g');
 		farHand.id = 'farHand_'+this.id;
 		farHand.setAttribute('fill',skinTone);
 		farHand.setAttribute('stroke','inherit');
+		var farPalm = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farHand.appendChild(farPalm);
+		var palmTurnDX = farHandTurnDX;
+		x = farWrist.x + handWidth * 0.35*palmTurnDX;
+		y = farWrist.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x - handWidth * 0.1*palmTurnDX;
+		c1y = y - handLength * 0.1;
+		x = x - handWidth * 0.7*palmTurnDX;
+		y = y;
+		c2x = x + handWidth * 0.1*palmTurnDX;
+		c2y = y - handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - handWidth * 0.1*palmTurnDX;
+		c1y = y + handLength * 0.1;
+		x = x;
+		y = y + handLength;
+		c2x = x - handWidth * 0.1*palmTurnDX;
+		c2y = y - handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + handWidth * 0.1*palmTurnDX;
+		c1y = y + handLength * 0.1;
+		x = x + handWidth*palmTurnDX;
+		y = y - handLength * 0.1;
+		c2x = x - handWidth * 0.1*palmTurnDX;
+		c2y = y + handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x + handWidth * 0.1*palmTurnDX;
+		c1y = y - handLength * 0.1;
+		x = x - handWidth * 0.3*palmTurnDX;
+		y = y - handLength * 0.9;
+		c2x = x + handWidth * 0.1*palmTurnDX;
+		c2y = y + handLength * 0.1;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		d += ' z';
+		farPalm.setAttribute('d',d);
+		var farPalmSide = document.createElementNS('http://www.w3.org/2000/svg','path');
+		farHand.appendChild(farPalmSide);
+		x = farWrist.x + handWidth * 0.25;
+		y = farWrist.y;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y + handLength * 0.5;
+		x = x - handWidth *0.2;
+		y = y + handLength;
+		c2x = x + handWidth * 0.1;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x - handWidth * 0.1;
+		c1y = y;
+		x = x - handWidth *0.3;
+		y = y - handLength;
+		c2x = x;
+		c2y = y + handLength * 0.5;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';		
+		farPalmSide.setAttribute('d',d);
+		farHand.setAttribute('transform','rotate('+farHandTilt+' '+farWrist.x+' '+farWrist.y+')');
+		var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+		farHand.appendChild(circle);
+		circle.setAttribute('stroke','none');
+		circle.setAttribute('cx',farWrist.x);
+		circle.setAttribute('cy',farWrist.y);
+		circle.setAttribute('r',handWidth*0.25);
+		var farThumb = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farThumb.id = 'farThumb'+this.id;
+		farThumb.setAttribute('fill',skinTone);
+		farThumb.setAttribute('stroke','inherit');
+		farThumb.setAttribute('transform','rotate('+farHandTilt+' '+farWrist.x+' '+farWrist.y+')');
+		var farThumbProximal = {
+			x: farWrist.x-handWidth*0.3*farHandTurnDX,
+			y: farWrist.y+handLength*0,
+			length: handLength*0.7,
+		};
+		var thumbProximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		farThumb.appendChild(thumbProximal);
+		thumbProximal.setAttribute('x',farThumbProximal.x-handWidth*0.15);
+		thumbProximal.setAttribute('y',farThumbProximal.y);
+		thumbProximal.setAttribute('height',farThumbProximal.length);
+		thumbProximal.setAttribute('width',handWidth*0.3);
+		thumbProximal.setAttribute('rx',handWidth*0.1);
+		thumbProximal.setAttribute('ry',handLength*0.5);
+		var tilt = -15 - 60*Math.max(0,this.pos('farHandSplay'))/Math.PI;
+		tilt *= -1;
+		thumbProximal.setAttribute('transform','rotate('+(tilt*farHandTurnDX)+' '+farThumbProximal.x+' '+farThumbProximal.y+')');
+		var thumbJoint = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		farThumb.appendChild(thumbJoint);
+		var thumbJointOffset = this.pos('farHandTurn') * -1;
+		thumbJoint.id = 'thumbJoint';
+		thumbJoint.setAttribute('x',farThumbProximal.x-handWidth*0.15-thumbJointOffset);
+		thumbJoint.setAttribute('y',farThumbProximal.y - handLength * 0.1);
+		thumbJoint.setAttribute('height',farThumbProximal.length*0.7);
+		thumbJoint.setAttribute('width',handWidth*0.3);
+		thumbJoint.setAttribute('rx',handWidth*0.1);
+		thumbJoint.setAttribute('ry',handLength*0.5);
+		thumbJoint.setAttribute('stroke','none');
+		var tilt = -15 - 60*Math.max(0,this.pos('farHandSplay'))/Math.PI;
+		tilt *= -1;
+		thumbJoint.setAttribute('transform','rotate('+(tilt*farHandTurnDX)+' '+farThumbProximal.x+' '+farThumbProximal.y+')');
+		var thumbDistal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		farThumb.appendChild(thumbDistal);
+		phalange = {
+			x: farThumbProximal.x - Math.sin((tilt*farHandTurnDX) * Math.PI / 180) * farThumbProximal.length,
+			y: farThumbProximal.y + Math.cos((tilt*farHandTurnDX) * Math.PI / 180) * farThumbProximal.length,
+			length: handLength*0.4,
+		};
+		thumbDistal.setAttribute('x',phalange.x-handWidth*0.1);
+		thumbDistal.setAttribute('y',phalange.y - handLength * 0.05);
+		thumbDistal.setAttribute('height',phalange.length);
+		thumbDistal.setAttribute('width',handWidth*0.2);
+		thumbDistal.setAttribute('rx',handWidth*0.05);
+		thumbDistal.setAttribute('ry',handLength*0.5);
+		var tilt = 20 - 90*Math.max(0,this.pos('farHandSplay'))/Math.PI;
+		tilt *= -1;
+		thumbDistal.setAttribute('transform','rotate('+(tilt*farHandTurnDX)+' '+phalange.x+' '+phalange.y+')');
+		thumbNailWidth = handWidth * 0.17 * farHandTurnDX/0.85;
+		var thumbNail = document.createElementNS('http://www.w3.org/2000/svg','path');
+		if (farHandTurnDX > 0) {
+			farThumb.appendChild(thumbNail);
+		} else {
+			farThumb.prepend(thumbNail);
+		};
+		thumbNail.setAttribute('fill',nailColor);
+		thumbNail.setAttribute('stroke','black');
+		thumbNail.setAttribute('stroke-width',0.5);
+		thumbNail.setAttribute('transform','rotate('+(tilt*farHandTurnDX)+' '+phalange.x+' '+phalange.y+')');
+		x = phalange.x + handWidth * 0.1;
+		if (farHandTurnDX < 0) {
+			x += thumbNailWidth;
+		};
+		y = phalange.y + phalange.length*0.4;
+		d = 'M '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x + thumbNailWidth * 0.05;
+		y = y + phalange.length*0.3;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y +  phalange.length * 0.2 * this.bio('nailsLength');
+		x = x - thumbNailWidth * 1.1;
+		y = y ;
+		c2x = x;
+		c2y = y + phalange.length * 0.2 * this.bio('nailsLength');;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x + thumbNailWidth * 0.05;
+		y = y - phalange.length*0.3;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		c1x = x;
+		c1y = y;
+		x = x + thumbNailWidth;
+		y = y;
+		c2x = x;
+		c2y = y;
+		d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+		thumbNail.setAttribute('d',d);
+		var farHandArray = [
+			document.createElementNS('http://www.w3.org/2000/svg','g'),
+			document.createElementNS('http://www.w3.org/2000/svg','g'),
+			document.createElementNS('http://www.w3.org/2000/svg','g'),
+			document.createElementNS('http://www.w3.org/2000/svg','g'),
+			document.createElementNS('http://www.w3.org/2000/svg','g'),
+		];
+		for (var i in farHandArray) {
+			farHandArray[i].id = 'farFinger_'+i+'_'+this.id;
+			farHandArray[i].setAttribute('fill',skinTone);
+			farHandArray[i].setAttribute('stroke','inherit');
+			farHandArray[i].setAttribute('transform','rotate('+farHandTilt+' '+farWrist.x+' '+farWrist.y+')');
+		};
+		var proximals = [];
+		var intermediates = [];
+		var distals = [];
+		for (var i=0;i<4;i++) {
+			var proximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			farHandArray[i].appendChild(proximal);
+			var phalange = {
+				x: farWrist.x - (i*handWidth*0.29 - handWidth * 0.57)*farHandTurnDX,
+				y: farWrist.y + handLength*0.8 + handLength*0.025*i,
+				length: handLength*digitLengths[0][i],
+				splay: -1 * splayMaxAngles[i] * Math.max(0,this.pos('farHandSplay')/Math.PI)*farHandTurnDX,
+				curl: farHandCurl,
+			};
+			proximals.push(phalange);
+			proximal.setAttribute('x',phalange.x - handWidth*0.1);
+			proximal.setAttribute('y',phalange.y);
+			proximal.setAttribute('height',phalange.length);
+			proximal.setAttribute('width',handWidth*0.2);
+			proximal.setAttribute('rx',handWidth*0.05);
+			proximal.setAttribute('ry',handLength*0.15);
+			proximal.setAttribute('transform','rotate('+(phalange.splay+phalange.curl)+' '+phalange.x+' '+phalange.y+')');
+			var intermediate = {
+				x:phalange.x - Math.sin((phalange.curl + phalange.splay) * Math.PI / 180) * phalange.length*0.8,
+				y:phalange.y + Math.cos((phalange.curl + phalange.splay) * Math.PI / 180) * phalange.length*0.8,
+			};
+			intermediates.push(intermediate);
+		};
+		for (var i in intermediates) {
+			var intermediate = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			farHandArray[i].appendChild(intermediate);
+			var phalange = {
+				x: intermediates[i].x,
+				y: intermediates[i].y,
+				length: handLength*digitLengths[1][i],
+				splay: proximals[i].splay,
+				curl: farHandCurl*2,
+			};
+			intermediates[i] = phalange;
+			intermediate.setAttribute('x',phalange.x - handWidth*0.09);
+			intermediate.setAttribute('y',phalange.y);
+			intermediate.setAttribute('height',phalange.length);
+			intermediate.setAttribute('width',handWidth*0.18);
+			intermediate.setAttribute('rx',handWidth*0.065);
+			intermediate.setAttribute('ry',handLength*0.15);
+			intermediate.setAttribute('transform','rotate('+(phalange.splay+phalange.curl)+' '+phalange.x+' '+phalange.y+')');
+			var distal = {
+				x:proximals[i].x - (Math.sin((proximals[i].splay + proximals[i].curl) * Math.PI / 180) * proximals[i].length*0.8) - (Math.sin((phalange.splay + phalange.curl) * Math.PI / 180) * phalange.length*0.8),
+				y:proximals[i].y + (Math.cos((proximals[i].splay + proximals[i].curl) * Math.PI / 180) * proximals[i].length*0.8) + (Math.cos((phalange.splay + phalange.curl) * Math.PI / 180) * phalange.length*0.8),
+			};
+			distals.push(distal);
+		}
+		for (var i in distals) {
+			var distal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+			farHandArray[i].appendChild(distal);
+			var phalange = {
+				x: distals[i].x,
+				y: distals[i].y,
+				length: handLength*digitLengths[2][i],
+				splay: proximals[i].splay,
+				curl: farHandCurl*3,
+			};
+			distals[i] = phalange;
+			distal.setAttribute('x',phalange.x - handWidth*0.075);
+			distal.setAttribute('y',phalange.y);
+			distal.setAttribute('height',phalange.length);
+			distal.setAttribute('width',handWidth*0.15);
+			distal.setAttribute('rx',handWidth*0.05);
+			distal.setAttribute('ry',handLength*0.15);
+			distal.setAttribute('transform','rotate('+(phalange.splay+phalange.curl)+' '+phalange.x+' '+phalange.y+')');
 
+			var nail = document.createElementNS('http://www.w3.org/2000/svg','path');
+			if ((farHandTurnDX < 0 && Math.abs(this.pos('farHandCurl')) < Math.PI/3) || (farHandTurnDX > 0 && Math.abs(this.pos('farHandCurl')) > Math.PI/3) ) {
+				farHandArray[i].prepend(nail);
+			} else {
+				farHandArray[i].appendChild(nail);
+			};
+			nail.setAttribute('fill',nailColor);
+			nail.setAttribute('stroke','black');
+			nail.setAttribute('stroke-width',0.5);
+			nail.setAttribute('transform','rotate('+(distals[i].splay+distals[i].curl)+' '+distals[i].x+' '+distals[i].y+')');
+			x = distals[i].x + handWidth*0.065;
+			y = distals[i].y + distals[i].length * 0.7;
+			d = 'M '+x+','+y+' ';
+			c1x = x;
+			c1y = y;
+			x = x;
+			y = y + distals[i].length * 0.3;
+			c2x = x;
+			c2y = y;
+			d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+			c1x = x;
+			c1y = y + distals[i].length * 0.2 * this.bio('nailsLength');
+			x = x - handWidth*0.13 * Math.abs(farHandTurnDX);
+			y = y;
+			c2x = x;
+			c2y = y + distals[i].length * 0.2 * this.bio('nailsLength');
+			d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+			c1x = x;
+			c1y = y;
+			x = x;
+			y = y - distals[i].length * 0.3;
+			c2x = x;
+			c2y = y;
+			d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+			c1x = x;
+			c1y = y - distals[i].length * 0.1;
+			x = x + handWidth*0.13 * Math.abs(farHandTurnDX);
+			y = y;
+			c2x = x;
+			c2y = y - distals[i].length * 0.1;
+			d += 'C '+c1x+','+c1y+' '+c2x+','+c2y+' '+x+','+y+' ';
+			d += 'z';
+			nail.setAttribute('d',d);
+		};
+		var palmFacing = this.pos('farHandTurn') < 0 && Math.abs(this.pos('farHandCurl')) > Math.PI/3;
+		if (palmFacing) {
+			farHandArray.unshift(farHand);
+		} else {
+			farHandArray.push(farHand);
+		};
+		farHandArray.push(farThumb);
+		var farJointCovers = document.createElementNS('http://www.w3.org/2000/svg','g');
+		farHandArray.push(farJointCovers);
+		farJointCovers.setAttribute('transform','rotate('+farHandTilt+' '+farWrist.x+' '+farWrist.y+')');
+		if (!palmFacing) {
+			for (i in proximals) {
+				var proximal = document.createElementNS('http://www.w3.org/2000/svg','rect');
+				proximal.setAttribute('fill',skinTone);
+				proximal.setAttribute('stroke','none');
+				proximal.setAttribute('x',proximals[i].x - handWidth*0.1);
+				proximal.setAttribute('y',proximals[i].y);
+				proximal.setAttribute('height',proximals[i].length);
+				proximal.setAttribute('width',handWidth*0.2);
+				proximal.setAttribute('rx',handWidth*0.05);
+				proximal.setAttribute('ry',handLength*0.15);
+				proximal.setAttribute('transform','rotate('+(proximals[i].splay+proximals[i].curl)+' '+proximals[i].x+' '+proximals[i].y+')');
+				farJointCovers.appendChild(proximal);
+			};
+		};
 
 		var farElbowJoint = document.createElementNS('http://www.w3.org/2000/svg','use');
 		farElbowJoint.id = 'farElbowJoint_'+this.id;
@@ -1861,10 +2210,6 @@ function MorfologyBody(id) {
 			pointsString += i.x + ',' + i.y + ' ';
 		};
 		pelvisBacking.setAttribute('points',pointsString);
-// 		pelvisBacking.setAttribute('x',nearHip.x);
-// 		pelvisBacking.setAttribute('y',Math.min(nearHip.y,farHip.y));
-// 		pelvisBacking.setAttribute('height',Math.abs(nearHip.y-farHip.y));
-// 		pelvisBacking.setAttribute('width',Math.abs(farHip.x-nearHip.x));
 		pelvisBacking.setAttribute('stroke','none');
 		var chest = document.createElementNS('http://www.w3.org/2000/svg','path');
 		chest.setAttribute('stroke','none');
@@ -2009,13 +2354,6 @@ function MorfologyBody(id) {
 		nippleBack.setAttribute('cx',farAreolae.x);
 		nippleBack.setAttribute('cy',farAreolae.y);
 		nippleBack.setAttribute('r',nippleWidth/2);
-// 		var block = document.createElementNS('http://www.w3.org/2000/svg','rect');
-//		farBreast.appendChild(block);
-// 		block.setAttribute('stroke','none');
-// 		block.setAttribute('x',farBreastAnchor.x-9);
-// 		block.setAttribute('y',farBreastAnchor.y-5);
-// 		block.setAttribute('width',10);
-// 		block.setAttribute('height',this.bio('breastSag')*30);
 		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
 		farBreast.appendChild(path);
 		var c1x, c1y, x, y, c2x, c2y;
@@ -2121,13 +2459,6 @@ function MorfologyBody(id) {
 		nippleBack.setAttribute('cx',nearAreolae.x);
 		nippleBack.setAttribute('cy',nearAreolae.y);
 		nippleBack.setAttribute('r',nippleWidth/2);
-// 		var block = document.createElementNS('http://www.w3.org/2000/svg','rect');
-// 		nearBreast.appendChild(block);
-// 		block.setAttribute('stroke','none');
-// 		block.setAttribute('x',nearBreastAnchor.x-1);
-// 		block.setAttribute('y',nearBreastAnchor.y-5);
-// 		block.setAttribute('width',10);
-// 		block.setAttribute('height',this.bio('breastSag')*30);
 		var path = document.createElementNS('http://www.w3.org/2000/svg','path');
 		nearBreast.appendChild(path);
 		var c1x, c1y, x, y, c2x, c2y;
@@ -3404,7 +3735,8 @@ function MorfologyBody(id) {
 		};
 		
 		if (upperBodyAngle) {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,farHand]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
+			bodyParts = bodyParts.concat(farHandArray);
 		} else {
 			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
 			bodyParts = bodyParts.concat(nearHandArray);
@@ -3437,7 +3769,8 @@ function MorfologyBody(id) {
 			bodyParts = bodyParts.concat([nearElbowJoint,nearUpperArm,nearLowerArm]);
 			bodyParts = bodyParts.concat(nearHandArray);
 		} else {
-			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm,farHand]);
+			bodyParts = bodyParts.concat([farElbowJoint,farUpperArm,farLowerArm]);
+			bodyParts = bodyParts.concat(farHandArray);
 		};
 		
 		if (bigBelly  && upperBodyAngle) {
@@ -3536,12 +3869,20 @@ function MorfologyBody(id) {
 		shots.appendChild(moneyShot);
 		var handShot = document.createElementNS('http://www.w3.org/2000/svg','rect');
 		handShot.id = 'handShot';
-		handShot.setAttribute('x',nearWrist.x - 75);
-		handShot.setAttribute('y',nearWrist.y - 75);
+		handShot.setAttribute('x',farWrist.x - 75);
+		handShot.setAttribute('y',farWrist.y - 75);
 		handShot.setAttribute('width',150);
 		handShot.setAttribute('height',150);
 		handShot.setAttribute('fill','none');
 		shots.appendChild(handShot);
+		var hand2Shot = document.createElementNS('http://www.w3.org/2000/svg','rect');
+		hand2Shot.id = 'hand2Shot';
+		hand2Shot.setAttribute('x',nearWrist.x - 75);
+		hand2Shot.setAttribute('y',nearWrist.y - 75);
+		hand2Shot.setAttribute('width',150);
+		hand2Shot.setAttribute('height',150);
+		hand2Shot.setAttribute('fill','none');
+		shots.appendChild(hand2Shot);
 					
 		return svg;
 	};
