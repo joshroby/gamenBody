@@ -10,7 +10,9 @@
 }
 
 .controlsDiv {
-	height: 100%;
+	height: 40%;
+	width: 25%;
 	float: left;
 	overflow-y: auto;
+	border: 20px solid white;
 }
